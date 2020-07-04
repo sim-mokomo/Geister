@@ -22,13 +22,5 @@ void ARootGameSequencer::BeginPlay()
 void ARootGameSequencer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	auto defaultSpawnParameter = new FActorSpawnParameters();
-	auto loginService = GetWorld()->SpawnActor<AILoginService>(*defaultSpawnParameter);
-	auto saveService = GetWorld()->SpawnActor<AISaveService>(*defaultSpawnParameter);
-
-	auto gs2UserId = "";
-	auto gs2Password = "";
-	saveService->Save(gs2UserId, gs2Password);
 }
 

@@ -63,4 +63,8 @@ public:
 	void LoginByProfile();
 	UFUNCTION(BlueprintCallable, Category = "GS2")
 	void FinalizeProfile();
+	UFUNCTION(BlueprintPure, Category = "GS2")
+	FString GetLoggedInUserId();
+	UFUNCTION(BlueprintPure, Category = "GS2")
+	FString GetLoggedInUserPassword();
 };

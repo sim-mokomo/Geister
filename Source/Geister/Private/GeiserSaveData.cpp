@@ -5,6 +5,11 @@
 
 UGeiserSaveData::UGeiserSaveData()
 {
-	SaveSlotName = TEXT("GeisterSaveData");
-	SaveUserIndex = 0;
+	
+}
+
+void UGeiserSaveData::SetBuildDatas(FString UserId, FString Password)
+{
+	this->UserId = UserId;
+	this->Password = Password;
 }

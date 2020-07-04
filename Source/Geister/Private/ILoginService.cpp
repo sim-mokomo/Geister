@@ -19,7 +19,7 @@ void AILoginService::BeginPlay()
 
 void AILoginService::InitializeProfile()
 {
-	UE_LOG(LogTemp, Log, TEXT("start initialize profile"));
+	UE_LOG(LogTemp, Display, TEXT("start initialize profile"));
 	ProfilePtr = std::make_shared<gs2::ez::Profile>(
 		TCHAR_TO_ANSI(*clientId),
 		TCHAR_TO_ANSI(*clientSecret),
@@ -37,9 +37,9 @@ void AILoginService::InitializeProfile()
 			return;
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("successed initialize profile"));
+		UE_LOG(LogTemp, Display, TEXT("successed initialize profile"));
 
-		CreateAccount();
+		CompleteInitializeProfileDelegate.Broadcast();
 	}
 	);
 }
@@ -51,7 +51,7 @@ void AILoginService::CreateAccount()
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("start create gs2 account"));
+	UE_LOG(LogTemp, Display, TEXT("start create gs2 account"));
 
 	ClientPtr->account.create(
 		[this](gs2::ez::account::AsyncEzCreateResult createdResult)
@@ -62,8 +62,9 @@ void AILoginService::CreateAccount()
 			return;
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("successed create gs2 account"));
+		UE_LOG(LogTemp, Display, TEXT("successed create gs2 account"));
 		EzAccount = createdResult.getResult()->getItem();
+		CompleteCreatedProfileDelegate.Broadcast();
 	},
 		TCHAR_TO_ANSI(*accountNamespaceName)
 		);
@@ -71,7 +72,7 @@ void AILoginService::CreateAccount()
 
 void AILoginService::LoginByProfile()
 {
-	UE_LOG(LogTemp, Log, TEXT("start gs2 login"));
+	UE_LOG(LogTemp, Display, TEXT("start gs2 login"));
 	ProfilePtr->login(
 		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
 	{
@@ -81,8 +82,9 @@ void AILoginService::LoginByProfile()
 			return;
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("successed gs2 login"));
+		UE_LOG(LogTemp, Display, TEXT("successed gs2 login"));
 		GameSession = *loginedResult.getResult();
+		CompleteLoggedInDelegate.Broadcast();
 	},
 		gs2::ez::Gs2AccountAuthenticator(
 			ProfilePtr->getGs2Session(),
@@ -96,13 +98,24 @@ void AILoginService::LoginByProfile()
 
 void AILoginService::FinalizeProfile()
 {
-	UE_LOG(LogTemp, Log, TEXT("start gs2 finalize"));
+	UE_LOG(LogTemp, Display, TEXT("start gs2 finalize"));
 	ProfilePtr->finalize(
 		[this]()
 	{
-		UE_LOG(LogTemp, Log, TEXT("successed gs2 finalize"));
+		UE_LOG(LogTemp, Display, TEXT("successed gs2 finalize"));
+		CompleteLoggedOutDelegate.Broadcast();
 	}
 	);
+}
+
+FString AILoginService::GetLoggedInUserId()
+{
+	return FString(EzAccount.getUserId().getCString());
+}
+
+FString AILoginService::GetLoggedInUserPassword()
+{	
+	return FString(EzAccount.getPassword().getCString());
 }
 
 // Called every frame
