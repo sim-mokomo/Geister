@@ -14,18 +14,13 @@ class GEISTER_API UGeiserSaveData : public USaveGame
 {
 	GENERATED_BODY()
 
-public:
+private:
 	UPROPERTY(VisibleAnywhere, Category = "GeisterSaveData")
 	FString UserId;
 
 	UPROPERTY(VisibleAnywhere, Category = "GeisterSaveData")
 		FString Password;
-
-	UPROPERTY(VisibleAnywhere, Category = "GesiterSaveData")
-		FString SaveSlotName;
-
-	UPROPERTY(VisibleAnywhere, Category = "GeisterSaveData")
-		uint32 SaveUserIndex;
-
+public:
 	UGeiserSaveData();
+	void SetBuildDatas(FString UserId, FString Password);
 };

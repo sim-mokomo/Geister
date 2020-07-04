@@ -15,10 +15,9 @@ AILoginService::AILoginService()
 void AILoginService::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-void AILoginService::InitializeProfile(std::function<void(gs2::ez::Profile::AsyncInitializeResult)> onComplete)
+void AILoginService::InitializeProfile()
 {
 	UE_LOG(LogTemp, Log, TEXT("start initialize profile"));
 	ProfilePtr = std::make_shared<gs2::ez::Profile>(
@@ -30,7 +29,7 @@ void AILoginService::InitializeProfile(std::function<void(gs2::ez::Profile::Asyn
 	ClientPtr = std::make_shared<gs2::ez::Client>(*ProfilePtr);
 
 	ProfilePtr->initialize(
-		[this,&onComplete](gs2::ez::Profile::AsyncInitializeResult initializeResult)
+		[this](gs2::ez::Profile::AsyncInitializeResult initializeResult)
 	{
 		if (initializeResult.getError())
 		{
@@ -40,13 +39,12 @@ void AILoginService::InitializeProfile(std::function<void(gs2::ez::Profile::Asyn
 
 		UE_LOG(LogTemp, Log, TEXT("successed initialize profile"));
 
-		//onComplete(initializeResult);
-		CreateAccount(nullptr);
+		CreateAccount();
 	}
 	);
 }
 
-void AILoginService::CreateAccount(std::function<void(gs2::ez::account::AsyncEzCreateResult)> onComplete)
+void AILoginService::CreateAccount()
 {
 	if (ClientPtr == nullptr)
 	{
@@ -56,7 +54,7 @@ void AILoginService::CreateAccount(std::function<void(gs2::ez::account::AsyncEzC
 	UE_LOG(LogTemp, Log, TEXT("start create gs2 account"));
 
 	ClientPtr->account.create(
-		[this,&onComplete](gs2::ez::account::AsyncEzCreateResult createdResult)
+		[this](gs2::ez::account::AsyncEzCreateResult createdResult)
 	{
 		if (createdResult.getError())
 		{
@@ -65,19 +63,17 @@ void AILoginService::CreateAccount(std::function<void(gs2::ez::account::AsyncEzC
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("successed create gs2 account"));
-		//onComplete(createdResult);
 		EzAccount = createdResult.getResult()->getItem();
-		LoginByProfile(nullptr);
 	},
 		TCHAR_TO_ANSI(*accountNamespaceName)
 		);
 }
 
-void AILoginService::LoginByProfile(std::function<void(gs2::ez::Profile::AsyncLoginResult)> onComplete)
+void AILoginService::LoginByProfile()
 {
 	UE_LOG(LogTemp, Log, TEXT("start gs2 login"));
 	ProfilePtr->login(
-		[this,&onComplete](gs2::ez::Profile::AsyncLoginResult loginedResult)
+		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
 	{
 		if (loginedResult.getError())
 		{
@@ -86,8 +82,6 @@ void AILoginService::LoginByProfile(std::function<void(gs2::ez::Profile::AsyncLo
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("successed gs2 login"));
-		//onComplete(loginedResult);
-
 		GameSession = *loginedResult.getResult();
 	},
 		gs2::ez::Gs2AccountAuthenticator(
@@ -100,14 +94,13 @@ void AILoginService::LoginByProfile(std::function<void(gs2::ez::Profile::AsyncLo
 		);
 }
 
-void AILoginService::FinalizeProfile(std::function<void(void)> onComplete)
+void AILoginService::FinalizeProfile()
 {
 	UE_LOG(LogTemp, Log, TEXT("start gs2 finalize"));
 	ProfilePtr->finalize(
-		[this,&onComplete]()
+		[this]()
 	{
 		UE_LOG(LogTemp, Log, TEXT("successed gs2 finalize"));
-		//onComplete();
 	}
 	);
 }
@@ -116,24 +109,4 @@ void AILoginService::FinalizeProfile(std::function<void(void)> onComplete)
 void AILoginService::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AILoginService::Login()
-{
-	InitializeProfile([this](gs2::ez::Profile::AsyncInitializeResult initializedProfileResult)
-	{
-		CreateAccount([this](gs2::ez::account::AsyncEzCreateResult createdResult) {
-			//EzAccount = createdResult.getResult()->getItem();
-			LoginByProfile([this](gs2::ez::Profile::AsyncLoginResult loginedResult) {
-				//GameSession = *loginedResult.getResult();
-			});
-		});
-	});
-}
-
-void AILoginService::Logout()
-{
-	FinalizeProfile([this]() {
-		//TODO: finalize anything
-	});
 }
