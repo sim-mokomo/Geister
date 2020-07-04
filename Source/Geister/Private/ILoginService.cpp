@@ -3,6 +3,7 @@
 #include "ILoginService.h"
 #include "..\Public\ILoginService.h"
 
+
 // Sets default values
 AILoginService::AILoginService()
 {
@@ -39,7 +40,8 @@ void AILoginService::InitializeProfile(std::function<void(gs2::ez::Profile::Asyn
 
 		UE_LOG(LogTemp, Log, TEXT("successed initialize profile"));
 
-		onComplete(initializeResult);
+		//onComplete(initializeResult);
+		CreateAccount(nullptr);
 	}
 	);
 }
@@ -63,7 +65,9 @@ void AILoginService::CreateAccount(std::function<void(gs2::ez::account::AsyncEzC
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("successed create gs2 account"));
-		onComplete(createdResult);
+		//onComplete(createdResult);
+		EzAccount = createdResult.getResult()->getItem();
+		LoginByProfile(nullptr);
 	},
 		TCHAR_TO_ANSI(*accountNamespaceName)
 		);
@@ -82,7 +86,9 @@ void AILoginService::LoginByProfile(std::function<void(gs2::ez::Profile::AsyncLo
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("successed gs2 login"));
-		onComplete(loginedResult);
+		//onComplete(loginedResult);
+
+		GameSession = *loginedResult.getResult();
 	},
 		gs2::ez::Gs2AccountAuthenticator(
 			ProfilePtr->getGs2Session(),
@@ -101,7 +107,7 @@ void AILoginService::FinalizeProfile(std::function<void(void)> onComplete)
 		[this,&onComplete]()
 	{
 		UE_LOG(LogTemp, Log, TEXT("successed gs2 finalize"));
-		onComplete();
+		//onComplete();
 	}
 	);
 }
@@ -114,12 +120,12 @@ void AILoginService::Tick(float DeltaTime)
 
 void AILoginService::Login()
 {
-	InitializeProfile([this](auto initializedProfileResult)
+	InitializeProfile([this](gs2::ez::Profile::AsyncInitializeResult initializedProfileResult)
 	{
-		CreateAccount([this](auto createdResult) {
-			EzAccount = createdResult.getResult()->getItem();
-			LoginByProfile([this](auto loginedResult) {
-				GameSession = *loginedResult.getResult();
+		CreateAccount([this](gs2::ez::account::AsyncEzCreateResult createdResult) {
+			//EzAccount = createdResult.getResult()->getItem();
+			LoginByProfile([this](gs2::ez::Profile::AsyncLoginResult loginedResult) {
+				//GameSession = *loginedResult.getResult();
 			});
 		});
 	});

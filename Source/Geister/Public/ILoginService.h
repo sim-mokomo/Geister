@@ -6,13 +6,14 @@
 #include "GameFramework/Actor.h"
 #include <gs2/ez/Gs2Ez.hpp>
 #include <memory>
+#include "DelegateCombinations.h"
 #include "ILoginService.generated.h"
 
 UCLASS()
 class GEISTER_API AILoginService : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:	
 	UPROPERTY(EditAnywhere,Category="GS2")
 		FString clientId;
@@ -22,8 +23,6 @@ public:
 		FString accountNamespaceName;
 	UPROPERTY(EditAnywhere, Category = "GS2")
 		FString accountEncryptionKeyId;
-
-	gs2::ez::Profile* profile;
 
 	// Sets default values for this actor's properties
 	AILoginService();
