@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ILoginService.h"
+#include "..\Public\ILoginService.h"
 
 // Sets default values
 AILoginService::AILoginService()
@@ -16,63 +17,117 @@ void AILoginService::BeginPlay()
 	
 }
 
+void AILoginService::InitializeProfile(std::function<void(gs2::ez::Profile::AsyncInitializeResult)> onComplete)
+{
+	UE_LOG(LogTemp, Log, TEXT("start initialize profile"));
+	ProfilePtr = std::make_shared<gs2::ez::Profile>(
+		TCHAR_TO_ANSI(*clientId),
+		TCHAR_TO_ANSI(*clientSecret),
+		gs2::ez::Gs2BasicReopener()
+		);
+
+	ClientPtr = std::make_shared<gs2::ez::Client>(*ProfilePtr);
+
+	ProfilePtr->initialize(
+		[this,&onComplete](gs2::ez::Profile::AsyncInitializeResult initializeResult)
+	{
+		if (initializeResult.getError())
+		{
+			UE_LOG(LogTemp, Error, TEXT("failed initialize profile"));
+			return;
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("successed initialize profile"));
+
+		onComplete(initializeResult);
+	}
+	);
+}
+
+void AILoginService::CreateAccount(std::function<void(gs2::ez::account::AsyncEzCreateResult)> onComplete)
+{
+	if (ClientPtr == nullptr)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("start create gs2 account"));
+
+	ClientPtr->account.create(
+		[this,&onComplete](gs2::ez::account::AsyncEzCreateResult createdResult)
+	{
+		if (createdResult.getError())
+		{
+			UE_LOG(LogTemp, Error, TEXT("failed create gs2 account"));
+			return;
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("successed create gs2 account"));
+		onComplete(createdResult);
+	},
+		TCHAR_TO_ANSI(*accountNamespaceName)
+		);
+}
+
+void AILoginService::LoginByProfile(std::function<void(gs2::ez::Profile::AsyncLoginResult)> onComplete)
+{
+	UE_LOG(LogTemp, Log, TEXT("start gs2 login"));
+	ProfilePtr->login(
+		[this,&onComplete](gs2::ez::Profile::AsyncLoginResult loginedResult)
+	{
+		if (loginedResult.getError())
+		{
+			UE_LOG(LogTemp, Error, TEXT("failed gs2 login"));
+			return;
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("successed gs2 login"));
+		onComplete(loginedResult);
+	},
+		gs2::ez::Gs2AccountAuthenticator(
+			ProfilePtr->getGs2Session(),
+			TCHAR_TO_ANSI(*accountNamespaceName),
+			TCHAR_TO_ANSI(*accountEncryptionKeyId),
+			EzAccount.getUserId(),
+			EzAccount.getPassword()
+		)
+		);
+}
+
+void AILoginService::FinalizeProfile(std::function<void(void)> onComplete)
+{
+	UE_LOG(LogTemp, Log, TEXT("start gs2 finalize"));
+	ProfilePtr->finalize(
+		[this,&onComplete]()
+	{
+		UE_LOG(LogTemp, Log, TEXT("successed gs2 finalize"));
+		onComplete();
+	}
+	);
+}
+
 // Called every frame
 void AILoginService::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AILoginService::Login()
 {
+	InitializeProfile([this](auto initializedProfileResult)
+	{
+		CreateAccount([this](auto createdResult) {
+			EzAccount = createdResult.getResult()->getItem();
+			LoginByProfile([this](auto loginedResult) {
+				GameSession = *loginedResult.getResult();
+			});
+		});
+	});
+}
 
-	UE_LOG(LogTemp, Log, TEXT("GS2 SDK クライアント初期化"));
-
-	auto clientIdHolder = new gs2::StringHolder(TCHAR_TO_UTF8(*clientId));
-	auto clientSecretHolder = new gs2::StringHolder(TCHAR_TO_UTF8(*clientSecret));
-	auto reopener = new gs2::ez::Gs2BasicReopener();
-	auto profile = new gs2::ez::Profile
-	(	
-		*clientIdHolder,
-		*clientSecretHolder,
-		*reopener
-	);
-
-	{	
-		auto fun = [&](gs2::ez::Profile::AsyncInitializeResult res) {
-			if (res.getError().has_value())
-				return;
-
-			auto gs2Client = new gs2::ez::account::Client(*profile);
-
-			UE_LOG(LogTemp, Log, TEXT("アカウントを新規作成"));
-
-			auto accountCreateCallBack = [&](gs2::ez::account::AsyncEzCreateResult res) {
-				if (res.getError().has_value())
-					return;
-				auto account = res.getResult().value().getItem();
-
-				UE_LOG(LogTemp, Log, TEXT("ログイン"));
-
-				gs2::ez::GameSession session;
-				auto authenticator = new gs2::ez::Gs2AccountAuthenticator(
-					profile->getGs2Session(),
-					*new gs2::StringHolder(TCHAR_TO_UTF8(*accountNamespaceName)),
-					*new gs2::StringHolder(TCHAR_TO_UTF8(*accountEncryptionKeyId)),
-					*new gs2::StringHolder(TCHAR_TO_UTF8(*account.getUserId())),
-					*new gs2::StringHolder(TCHAR_TO_UTF8(*account.getPassword()))
-				);
-				gs2::ez::Profile::LoginCallbackType loginCallback = [&](gs2::ez::Profile::AsyncLoginResult res)
-				{
-					session = res.getResult().value();
-				};
-				profile->login(loginCallback, authenticator);
-			};
-			auto nameSpaceStringHolder = new gs2::StringHolder(TCHAR_TO_UTF8(*accountNamespaceName));
-			gs2Client->create(accountCreateCallBack, *nameSpaceStringHolder);
-		};
-		profile->initialize(fun);
-
-
-	}
+void AILoginService::Logout()
+{
+	FinalizeProfile([this]() {
+		//TODO: finalize anything
+	});
 }
