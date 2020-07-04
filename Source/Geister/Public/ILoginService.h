@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "gs2-unreal-engine-sdk/src/gs2/ez/Profile.hpp"
-#include "gs2-unreal-engine-sdk/src/gs2/ez/Gs2BasicReopener.hpp"
-#include "gs2-unreal-engine-sdk/src/gs2/core/util/StringHolder.hpp"
+#include "gs2/ez/Profile.hpp"
+#include "gs2/ez/Gs2BasicReopener.hpp"
+#include "gs2/core/util/StringHolder.hpp"
+#include "gs2/core/network/Gs2WebSocketSession.hpp"
+#include "gs2/ez/account/Client.hpp"
+#include "gs2/ez/account/model/EzAccount.hpp"
 #include "ILoginService.generated.h"
 
 UCLASS()
