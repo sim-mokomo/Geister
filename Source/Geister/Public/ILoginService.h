@@ -10,6 +10,7 @@
 #include "gs2/core/network/Gs2WebSocketSession.hpp"
 #include "gs2/ez/account/Client.hpp"
 #include "gs2/ez/account/model/EzAccount.hpp"
+#include "gs2/ez/Gs2AccountAuthenticator.hpp"
 #include "ILoginService.generated.h"
 
 UCLASS()

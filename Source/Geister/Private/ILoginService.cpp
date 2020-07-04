@@ -28,8 +28,8 @@ void AILoginService::Login()
 
 	UE_LOG(LogTemp, Log, TEXT("GS2 SDK クライアント初期化"));
 
-	auto clientIdHolder = new gs2::StringHolder(TCHAR_TO_ANSI(*clientId));
-	auto clientSecretHolder = new gs2::StringHolder(TCHAR_TO_ANSI(*clientSecret));
+	auto clientIdHolder = new gs2::StringHolder(TCHAR_TO_UTF8(*clientId));
+	auto clientSecretHolder = new gs2::StringHolder(TCHAR_TO_UTF8(*clientSecret));
 	auto reopener = new gs2::ez::Gs2BasicReopener();
 	auto profile = new gs2::ez::Profile
 	(	
@@ -53,8 +53,22 @@ void AILoginService::Login()
 				auto account = res.getResult().value().getItem();
 
 				UE_LOG(LogTemp, Log, TEXT("ログイン"));
+
+				gs2::ez::GameSession session;
+				auto authenticator = new gs2::ez::Gs2AccountAuthenticator(
+					profile->getGs2Session(),
+					*new gs2::StringHolder(TCHAR_TO_UTF8(*accountNamespaceName)),
+					*new gs2::StringHolder(TCHAR_TO_UTF8(*accountEncryptionKeyId)),
+					*new gs2::StringHolder(TCHAR_TO_UTF8(*account.getUserId())),
+					*new gs2::StringHolder(TCHAR_TO_UTF8(*account.getPassword()))
+				);
+				gs2::ez::Profile::LoginCallbackType loginCallback = [&](gs2::ez::Profile::AsyncLoginResult res)
+				{
+					session = res.getResult().value();
+				};
+				profile->login(loginCallback, authenticator);
 			};
-			auto nameSpaceStringHolder = new gs2::StringHolder(TCHAR_TO_ANSI(*accountNamespaceName));
+			auto nameSpaceStringHolder = new gs2::StringHolder(TCHAR_TO_UTF8(*accountNamespaceName));
 			gs2Client->create(accountCreateCallBack, *nameSpaceStringHolder);
 		};
 		profile->initialize(fun);
