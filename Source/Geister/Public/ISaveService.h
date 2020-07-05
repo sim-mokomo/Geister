@@ -14,10 +14,10 @@ class GEISTER_API AISaveService : public AActor
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "GesiterSaveData")
+	UPROPERTY(EditAnywhere, Category = "GesiterSaveData")
 		FString SaveSlotName;
 
-	UPROPERTY(VisibleAnywhere, Category = "GeisterSaveData")
+	UPROPERTY(EditAnywhere, Category = "GeisterSaveData")
 		uint32 SaveUserIndex;
 	
 public:	
@@ -32,6 +32,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Save(FString UserId, FString Password);
+	UFUNCTION(BlueprintCallable, Category="Geister|Save")
+	void SaveLoginData(FString UserId, FString Password);
 
+	UFUNCTION(BlueprintPure, Category = "Geister|Save")
+	bool ExistLoginSaveData();
+
+	UFUNCTION(BlueprintPure, Category = "Geister|Save")
+	void GetLoginSaveData(FString& UserId,FString& Password);
 };

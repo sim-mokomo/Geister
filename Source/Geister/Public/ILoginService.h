@@ -20,22 +20,22 @@ class GEISTER_API AILoginService : public AActor
 	GENERATED_BODY()
 
 public:	
-	UPROPERTY(EditAnywhere,Category="GS2")
-		FString clientId;
-	UPROPERTY(EditAnywhere, Category = "GS2")
-		FString clientSecret;
-	UPROPERTY(EditAnywhere, Category = "GS2")
-		FString accountNamespaceName;
-	UPROPERTY(EditAnywhere, Category = "GS2")
-		FString accountEncryptionKeyId;
+	UPROPERTY(EditAnywhere,Category="Geister|Account")
+		FString ClientId;
+	UPROPERTY(EditAnywhere, Category = "Geister|Account")
+		FString ClientSecret;
+	UPROPERTY(EditAnywhere, Category = "Geister|Account")
+		FString AccountNamespaceName;
+	UPROPERTY(EditAnywhere, Category = "Geister|Account")
+		FString AccountEncryptionKeyId;
 
-	UPROPERTY(BlueprintAssignable, Category = "GS2")
+	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
 		FCompleteInitializedProfile CompleteInitializeProfileDelegate;
-	UPROPERTY(BlueprintAssignable, Category = "GS2")
+	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
 		FCompleteCreatedProfile CompleteCreatedProfileDelegate;
-	UPROPERTY(BlueprintAssignable, Category = "GS2")
+	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
 		FCompleteLoggedIn CompleteLoggedInDelegate;
-	UPROPERTY(BlueprintAssignable, Category = "GS2")
+	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
 		FCompleteLoggedOut CompleteLoggedOutDelegate;
 
 	// Sets default values for this actor's properties
@@ -55,16 +55,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "GS2")
-	void InitializeProfile();
-	UFUNCTION(BlueprintCallable, Category = "GS2")
+	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
+	void Initialize();
+	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
 	void CreateAccount();
-	UFUNCTION(BlueprintCallable, Category = "GS2")
-	void LoginByProfile();
-	UFUNCTION(BlueprintCallable, Category = "GS2")
-	void FinalizeProfile();
-	UFUNCTION(BlueprintPure, Category = "GS2")
+	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
+	void Login(FString UserId,FString Password);
+	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
+	void Finalize();
+	UFUNCTION(BlueprintPure, Category = "Geister|Account")
 	FString GetLoggedInUserId();
-	UFUNCTION(BlueprintPure, Category = "GS2")
+	UFUNCTION(BlueprintPure, Category = "Geister|Account")
 	FString GetLoggedInUserPassword();
 };

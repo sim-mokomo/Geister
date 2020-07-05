@@ -17,12 +17,12 @@ void AILoginService::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AILoginService::InitializeProfile()
+void AILoginService::Initialize()
 {
 	UE_LOG(LogTemp, Display, TEXT("start initialize profile"));
 	ProfilePtr = std::make_shared<gs2::ez::Profile>(
-		TCHAR_TO_ANSI(*clientId),
-		TCHAR_TO_ANSI(*clientSecret),
+		TCHAR_TO_ANSI(*ClientId),
+		TCHAR_TO_ANSI(*ClientSecret),
 		gs2::ez::Gs2BasicReopener()
 		);
 
@@ -66,13 +66,24 @@ void AILoginService::CreateAccount()
 		EzAccount = createdResult.getResult()->getItem();
 		CompleteCreatedProfileDelegate.Broadcast();
 	},
-		TCHAR_TO_ANSI(*accountNamespaceName)
+		TCHAR_TO_ANSI(*AccountNamespaceName)
 		);
 }
 
-void AILoginService::LoginByProfile()
+FString AILoginService::GetLoggedInUserId()
+{
+	return FString(EzAccount.getUserId().getCString());
+}
+
+FString AILoginService::GetLoggedInUserPassword()
+{	
+	return FString(EzAccount.getPassword().getCString());
+}
+
+void AILoginService::Login(FString UserId,FString Password)
 {
 	UE_LOG(LogTemp, Display, TEXT("start gs2 login"));
+
 	ProfilePtr->login(
 		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
 	{
@@ -88,15 +99,15 @@ void AILoginService::LoginByProfile()
 	},
 		gs2::ez::Gs2AccountAuthenticator(
 			ProfilePtr->getGs2Session(),
-			TCHAR_TO_ANSI(*accountNamespaceName),
-			TCHAR_TO_ANSI(*accountEncryptionKeyId),
-			EzAccount.getUserId(),
-			EzAccount.getPassword()
+			TCHAR_TO_ANSI(*AccountNamespaceName),
+			TCHAR_TO_ANSI(*AccountEncryptionKeyId),
+			TCHAR_TO_ANSI(*UserId),
+			TCHAR_TO_ANSI(*Password)
 		)
 		);
 }
 
-void AILoginService::FinalizeProfile()
+void AILoginService::Finalize()
 {
 	UE_LOG(LogTemp, Display, TEXT("start gs2 finalize"));
 	ProfilePtr->finalize(
@@ -106,16 +117,6 @@ void AILoginService::FinalizeProfile()
 		CompleteLoggedOutDelegate.Broadcast();
 	}
 	);
-}
-
-FString AILoginService::GetLoggedInUserId()
-{
-	return FString(EzAccount.getUserId().getCString());
-}
-
-FString AILoginService::GetLoggedInUserPassword()
-{	
-	return FString(EzAccount.getPassword().getCString());
 }
 
 // Called every frame

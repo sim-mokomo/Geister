@@ -23,4 +23,9 @@ private:
 public:
 	UGeiserSaveData();
 	void SetBuildDatas(FString UserId, FString Password);
+
+	UFUNCTION(BlueprintPure, Category = "Geister/SaveData")
+		FString GetUserId();
+	UFUNCTION(BlueprintPure, Category = "Geister/SaveData")
+		FString GetPassword();
 };

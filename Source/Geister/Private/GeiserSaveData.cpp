@@ -13,3 +13,13 @@ void UGeiserSaveData::SetBuildDatas(FString UserId, FString Password)
 	this->UserId = UserId;
 	this->Password = Password;
 }
+
+FString UGeiserSaveData::GetUserId()
+{
+	return this->UserId;
+}
+
+FString UGeiserSaveData::GetPassword()
+{
+	return this->Password;
+}
