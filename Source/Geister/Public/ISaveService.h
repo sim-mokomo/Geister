@@ -14,10 +14,10 @@ class GEISTER_API AISaveService : public AActor
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere, Category = "GesiterSaveData")
+	UPROPERTY(EditAnywhere, Category = "Gesiter|SaveData")
 		FString SaveSlotName;
 
-	UPROPERTY(EditAnywhere, Category = "GeisterSaveData")
+	UPROPERTY(EditAnywhere, Category = "Geister|SaveData")
 		uint32 SaveUserIndex;
 	
 public:	

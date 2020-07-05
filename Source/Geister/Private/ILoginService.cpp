@@ -19,7 +19,7 @@ void AILoginService::BeginPlay()
 
 void AILoginService::Initialize()
 {
-	UE_LOG(LogTemp, Display, TEXT("start initialize profile"));
+	GEngine->AddOnScreenDebugMessage(-1, 999, FColor::Green, TEXT("start initialize profile"));
 	ProfilePtr = std::make_shared<gs2::ez::Profile>(
 		TCHAR_TO_ANSI(*ClientId),
 		TCHAR_TO_ANSI(*ClientSecret),
@@ -33,11 +33,12 @@ void AILoginService::Initialize()
 	{
 		if (initializeResult.getError())
 		{
+			
 			UE_LOG(LogTemp, Error, TEXT("failed initialize profile"));
+			GEngine->AddOnScreenDebugMessage(-1, 999, FColor::Red, TEXT("failed initialize profile"));
 			return;
 		}
-
-		UE_LOG(LogTemp, Display, TEXT("successed initialize profile"));
+		GEngine->AddOnScreenDebugMessage(-1, 999, FColor::Green, TEXT("successed initialize profile"));
 
 		CompleteInitializeProfileDelegate.Broadcast();
 	}

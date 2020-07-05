@@ -8,10 +8,10 @@ UGeiserSaveData::UGeiserSaveData()
 	
 }
 
-void UGeiserSaveData::SetBuildDatas(FString UserId, FString Password)
+void UGeiserSaveData::SetBuildDatas(FString SavedUserId, FString SavedPassword)
 {
-	this->UserId = UserId;
-	this->Password = Password;
+	this->UserId = SavedUserId;
+	this->Password = SavedPassword;
 }
 
 FString UGeiserSaveData::GetUserId()

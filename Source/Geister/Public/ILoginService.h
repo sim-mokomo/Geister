@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include <gs2/ez/Gs2Ez.hpp>
 #include <memory>
+#include "Engine/Engine.h"
 #include "DelegateCombinations.h"
 #include "ILoginService.generated.h"
 
