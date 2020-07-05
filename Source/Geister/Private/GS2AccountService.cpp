@@ -1,51 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ILoginService.h"
-#include "..\Public\ILoginService.h"
+#include "GS2AccountService.h"
+#include "..\Public\GS2AccountService.h"
 
 
 // Sets default values
-AILoginService::AILoginService()
+AGS2AccountService::AGS2AccountService()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
-void AILoginService::BeginPlay()
+void AGS2AccountService::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AILoginService::Initialize()
+void AGS2AccountService::Initialize()
 {
-	UE_SUCCESS_LOG(TEXT("start initialize profile"));
-
-	ProfilePtr = std::make_shared<gs2::ez::Profile>(
-		TCHAR_TO_ANSI(*ClientId),
-		TCHAR_TO_ANSI(*ClientSecret),
-		gs2::ez::Gs2BasicReopener()
-		);
-
-	ClientPtr = std::make_shared<gs2::ez::Client>(*ProfilePtr);
-
-	ProfilePtr->initialize(
-		[this](gs2::ez::Profile::AsyncInitializeResult initializeResult)
-	{
-		if (initializeResult.getError())
-		{
-			UE_ERROR_LOG(TEXT("failed initialize profile"));
-			return;
-		}
-		
-		UE_SUCCESS_LOG(TEXT("successed initialize profile"));
-
-		CompleteInitializeProfileDelegate.Broadcast();
-	}
-	);
+	InitializeProfile();
 }
 
-void AILoginService::CreateAccount()
+void AGS2AccountService::CreateAccount()
 {
 	if (ClientPtr == nullptr)
 	{
@@ -71,24 +48,26 @@ void AILoginService::CreateAccount()
 		);
 }
 
-FString AILoginService::GetLoggedInUserId()
+FString AGS2AccountService::GetLoggedInUserId()
 {
 	return FString(EzAccount.getUserId().getCString());
 }
 
-FString AILoginService::GetLoggedInUserPassword()
+FString AGS2AccountService::GetLoggedInUserPassword()
 {	
 	return FString(EzAccount.getPassword().getCString());
 }
 
-void AILoginService::Login(FString UserId,FString Password)
+void AGS2AccountService::Login(UAccountLoginDTO* loginDTO)
 {
 	UE_SUCCESS_LOG(TEXT("start gs2 login"))
+	auto gs2LoginDTO = Cast<UGS2AccountLoginDTO>(loginDTO);
 
 	ProfilePtr->login(
 		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
 	{
-		if (loginedResult.getError())
+		auto error = loginedResult.getError();
+		if (error)
 		{
 			UE_ERROR_LOG(TEXT("failed gs2 login"))
 			return;
@@ -102,13 +81,13 @@ void AILoginService::Login(FString UserId,FString Password)
 			ProfilePtr->getGs2Session(),
 			TCHAR_TO_ANSI(*AccountNamespaceName),
 			TCHAR_TO_ANSI(*AccountEncryptionKeyId),
-			TCHAR_TO_ANSI(*UserId),
-			TCHAR_TO_ANSI(*Password)
+			TCHAR_TO_ANSI(*gs2LoginDTO->GetUserId()),
+			TCHAR_TO_ANSI(*gs2LoginDTO->GetPassword())
 		)
 		);
 }
 
-void AILoginService::Finalize()
+void AGS2AccountService::Logout()
 {
 	UE_SUCCESS_LOG(TEXT("start gs2 finalize"));
 	ProfilePtr->finalize(
@@ -120,8 +99,36 @@ void AILoginService::Finalize()
 	);
 }
 
+void AGS2AccountService::InitializeProfile()
+{
+	UE_SUCCESS_LOG(TEXT("start initialize profile"));
+
+	ProfilePtr = std::make_shared<gs2::ez::Profile>(
+		TCHAR_TO_ANSI(*ClientId),
+		TCHAR_TO_ANSI(*ClientSecret),
+		gs2::ez::Gs2BasicReopener()
+		);
+
+	ClientPtr = std::make_shared<gs2::ez::Client>(*ProfilePtr);
+
+	ProfilePtr->initialize(
+		[this](gs2::ez::Profile::AsyncInitializeResult initializeResult)
+	{
+		if (initializeResult.getError())
+		{
+			UE_ERROR_LOG(TEXT("failed initialize profile"));
+			return;
+		}
+
+		UE_SUCCESS_LOG(TEXT("successed initialize profile"));
+
+		CompleteInitializeProfileDelegate.Broadcast();
+	}
+	);
+}
+
 // Called every frame
-void AILoginService::Tick(float DeltaTime)
+void AGS2AccountService::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }

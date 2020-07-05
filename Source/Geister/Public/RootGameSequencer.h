@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
-#include "Geister/Public/ILoginService.h"
+#include "Geister/Public/GS2AccountService.h"
 #include "Geister/Public/ISaveService.h"
 #include "Engine/Engine.h"
 #include "RootGameSequencer.generated.h"
@@ -16,7 +16,7 @@ class GEISTER_API ARootGameSequencer : public AActor
 	GENERATED_BODY()
 private:
 	UPROPERTY(EditAnywhere)
-	AILoginService* loginService;
+	AGS2AccountService* loginService;
 	UPROPERTY(EditAnywhere)
 	AISaveService* saveService;
 	UFUNCTION()
@@ -36,8 +36,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintPure)
-		AILoginService* GetAccountService();
-	UFUNCTION(BlueprintPure)
-		AISaveService* GetAccountSaveService();
+	UFUNCTION()
+	AGS2AccountService* GetAccountService();
+	UFUNCTION()
+	AISaveService* GetAccountSaveService();
 };

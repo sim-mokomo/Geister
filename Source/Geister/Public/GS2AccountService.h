@@ -9,7 +9,9 @@
 #include "Engine/Engine.h"
 #include "Geister/Public/MacroLibrary.h"
 #include "DelegateCombinations.h"
-#include "ILoginService.generated.h"
+#include "Geister/Public/AccountServiceInterface.h"
+#include "Geister/Public/GS2AccountLoginDTO.h"
+#include "GS2AccountService.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteInitializedProfile);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteCreatedProfile);
@@ -17,12 +19,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteLoggedIn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteLoggedOut);
 
 UCLASS()
-class GEISTER_API AILoginService : public AActor
+class GEISTER_API AGS2AccountService : public AActor, public IAccountServiceInterface
 {
 	GENERATED_BODY()
 
-public:	
-	UPROPERTY(EditAnywhere,Category="Geister|Account")
+public:
+	UPROPERTY(EditAnywhere, Category = "Geister|Account")
 		FString ClientId;
 	UPROPERTY(EditAnywhere, Category = "Geister|Account")
 		FString ClientSecret;
@@ -31,17 +33,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Geister|Account")
 		FString AccountEncryptionKeyId;
 
-	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
-		FCompleteInitializedProfile CompleteInitializeProfileDelegate;
-	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
-		FCompleteCreatedProfile CompleteCreatedProfileDelegate;
-	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
-		FCompleteLoggedIn CompleteLoggedInDelegate;
-	UPROPERTY(BlueprintAssignable, Category = "Geister|Account")
-		FCompleteLoggedOut CompleteLoggedOutDelegate;
+	FCompleteInitializedProfile CompleteInitializeProfileDelegate;
+	FCompleteCreatedProfile CompleteCreatedProfileDelegate;
+	FCompleteLoggedIn CompleteLoggedInDelegate;
+	FCompleteLoggedOut CompleteLoggedOutDelegate;
 
 	// Sets default values for this actor's properties
-	AILoginService();
+	AGS2AccountService();
 
 protected:
 	// Called when the game starts or when spawned
@@ -53,20 +51,21 @@ private:
 	gs2::ez::GameSession GameSession;
 	gs2::ez::account::EzAccount EzAccount;
 
-public:	
+	void InitializeProfile();
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
-	void Initialize();
-	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
-	void CreateAccount();
-	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
-	void Login(FString UserId,FString Password);
-	UFUNCTION(BlueprintCallable, Category = "Geister|Account")
-	void Finalize();
-	UFUNCTION(BlueprintPure, Category = "Geister|Account")
-	FString GetLoggedInUserId();
-	UFUNCTION(BlueprintPure, Category = "Geister|Account")
-	FString GetLoggedInUserPassword();
+	UFUNCTION()
+		virtual void Initialize() override;
+	UFUNCTION()
+		virtual void CreateAccount() override;
+		virtual void Login(UAccountLoginDTO* loginDTO) override;
+	UFUNCTION()
+		virtual void Logout() override;
+	UFUNCTION()
+		FString GetLoggedInUserId();
+	UFUNCTION()
+		FString GetLoggedInUserPassword();
 };

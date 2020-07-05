@@ -39,5 +39,5 @@ public:
 	bool ExistLoginSaveData();
 
 	UFUNCTION(BlueprintPure, Category = "Geister|Save")
-	void GetLoginSaveData(FString& UserId,FString& Password);
+		void GetLoginSaveData(FString& UserId, FString& Password);
 };
