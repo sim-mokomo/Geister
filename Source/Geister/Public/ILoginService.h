@@ -7,6 +7,7 @@
 #include <gs2/ez/Gs2Ez.hpp>
 #include <memory>
 #include "Engine/Engine.h"
+#include "Geister/Public/MacroLibrary.h"
 #include "DelegateCombinations.h"
 #include "ILoginService.generated.h"
 

@@ -40,7 +40,7 @@ ARootGameSequencer::ARootGameSequencer()
 void ARootGameSequencer::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	// ローカルにログインデータを保存、使いまわしができるように
 	this->loginService->CompleteInitializeProfileDelegate.AddDynamic(this, &ARootGameSequencer::OnCompleteInitializedProfile);
 	this->loginService->CompleteCreatedProfileDelegate.AddDynamic(this, &ARootGameSequencer::OnCompleteCreatedAccount);

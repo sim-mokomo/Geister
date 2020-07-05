@@ -19,7 +19,8 @@ void AILoginService::BeginPlay()
 
 void AILoginService::Initialize()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 999, FColor::Green, TEXT("start initialize profile"));
+	UE_SUCCESS_LOG(TEXT("start initialize profile"));
+
 	ProfilePtr = std::make_shared<gs2::ez::Profile>(
 		TCHAR_TO_ANSI(*ClientId),
 		TCHAR_TO_ANSI(*ClientSecret),
@@ -33,12 +34,11 @@ void AILoginService::Initialize()
 	{
 		if (initializeResult.getError())
 		{
-			
-			UE_LOG(LogTemp, Error, TEXT("failed initialize profile"));
-			GEngine->AddOnScreenDebugMessage(-1, 999, FColor::Red, TEXT("failed initialize profile"));
+			UE_ERROR_LOG(TEXT("failed initialize profile"));
 			return;
 		}
-		GEngine->AddOnScreenDebugMessage(-1, 999, FColor::Green, TEXT("successed initialize profile"));
+		
+		UE_SUCCESS_LOG(TEXT("successed initialize profile"));
 
 		CompleteInitializeProfileDelegate.Broadcast();
 	}
@@ -52,18 +52,18 @@ void AILoginService::CreateAccount()
 		return;
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("start create gs2 account"));
+	UE_SUCCESS_LOG(TEXT("start create gs2 account"));
 
 	ClientPtr->account.create(
 		[this](gs2::ez::account::AsyncEzCreateResult createdResult)
 	{
 		if (createdResult.getError())
 		{
-			UE_LOG(LogTemp, Error, TEXT("failed create gs2 account"));
+			UE_ERROR_LOG(TEXT("failed create gs2 account"));
 			return;
 		}
 
-		UE_LOG(LogTemp, Display, TEXT("successed create gs2 account"));
+		UE_SUCCESS_LOG(TEXT("successed create gs2 account"));
 		EzAccount = createdResult.getResult()->getItem();
 		CompleteCreatedProfileDelegate.Broadcast();
 	},
@@ -83,18 +83,18 @@ FString AILoginService::GetLoggedInUserPassword()
 
 void AILoginService::Login(FString UserId,FString Password)
 {
-	UE_LOG(LogTemp, Display, TEXT("start gs2 login"));
+	UE_SUCCESS_LOG(TEXT("start gs2 login"))
 
 	ProfilePtr->login(
 		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
 	{
 		if (loginedResult.getError())
 		{
-			UE_LOG(LogTemp, Error, TEXT("failed gs2 login"));
+			UE_ERROR_LOG(TEXT("failed gs2 login"))
 			return;
 		}
 
-		UE_LOG(LogTemp, Display, TEXT("successed gs2 login"));
+		UE_SUCCESS_LOG(TEXT("successed gs2 login"));
 		GameSession = *loginedResult.getResult();
 		CompleteLoggedInDelegate.Broadcast();
 	},
@@ -110,11 +110,11 @@ void AILoginService::Login(FString UserId,FString Password)
 
 void AILoginService::Finalize()
 {
-	UE_LOG(LogTemp, Display, TEXT("start gs2 finalize"));
+	UE_SUCCESS_LOG(TEXT("start gs2 finalize"));
 	ProfilePtr->finalize(
 		[this]()
 	{
-		UE_LOG(LogTemp, Display, TEXT("successed gs2 finalize"));
+		UE_ERROR_LOG(TEXT("successed gs2 finalize"));
 		CompleteLoggedOutDelegate.Broadcast();
 	}
 	);
