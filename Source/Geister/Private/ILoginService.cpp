@@ -15,99 +15,107 @@ AILoginService::AILoginService()
 void AILoginService::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-void AILoginService::InitializeProfile(std::function<void(gs2::ez::Profile::AsyncInitializeResult)> onComplete)
+void AILoginService::Initialize()
 {
-	UE_LOG(LogTemp, Log, TEXT("start initialize profile"));
+	UE_SUCCESS_LOG(TEXT("start initialize profile"));
+
 	ProfilePtr = std::make_shared<gs2::ez::Profile>(
-		TCHAR_TO_ANSI(*clientId),
-		TCHAR_TO_ANSI(*clientSecret),
+		TCHAR_TO_ANSI(*ClientId),
+		TCHAR_TO_ANSI(*ClientSecret),
 		gs2::ez::Gs2BasicReopener()
 		);
 
 	ClientPtr = std::make_shared<gs2::ez::Client>(*ProfilePtr);
 
 	ProfilePtr->initialize(
-		[this,&onComplete](gs2::ez::Profile::AsyncInitializeResult initializeResult)
+		[this](gs2::ez::Profile::AsyncInitializeResult initializeResult)
 	{
 		if (initializeResult.getError())
 		{
-			UE_LOG(LogTemp, Error, TEXT("failed initialize profile"));
+			UE_ERROR_LOG(TEXT("failed initialize profile"));
 			return;
 		}
+		
+		UE_SUCCESS_LOG(TEXT("successed initialize profile"));
 
-		UE_LOG(LogTemp, Log, TEXT("successed initialize profile"));
-
-		//onComplete(initializeResult);
-		CreateAccount(nullptr);
+		CompleteInitializeProfileDelegate.Broadcast();
 	}
 	);
 }
 
-void AILoginService::CreateAccount(std::function<void(gs2::ez::account::AsyncEzCreateResult)> onComplete)
+void AILoginService::CreateAccount()
 {
 	if (ClientPtr == nullptr)
 	{
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("start create gs2 account"));
+	UE_SUCCESS_LOG(TEXT("start create gs2 account"));
 
 	ClientPtr->account.create(
-		[this,&onComplete](gs2::ez::account::AsyncEzCreateResult createdResult)
+		[this](gs2::ez::account::AsyncEzCreateResult createdResult)
 	{
 		if (createdResult.getError())
 		{
-			UE_LOG(LogTemp, Error, TEXT("failed create gs2 account"));
+			UE_ERROR_LOG(TEXT("failed create gs2 account"));
 			return;
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("successed create gs2 account"));
-		//onComplete(createdResult);
+		UE_SUCCESS_LOG(TEXT("successed create gs2 account"));
 		EzAccount = createdResult.getResult()->getItem();
-		LoginByProfile(nullptr);
+		CompleteCreatedProfileDelegate.Broadcast();
 	},
-		TCHAR_TO_ANSI(*accountNamespaceName)
+		TCHAR_TO_ANSI(*AccountNamespaceName)
 		);
 }
 
-void AILoginService::LoginByProfile(std::function<void(gs2::ez::Profile::AsyncLoginResult)> onComplete)
+FString AILoginService::GetLoggedInUserId()
 {
-	UE_LOG(LogTemp, Log, TEXT("start gs2 login"));
+	return FString(EzAccount.getUserId().getCString());
+}
+
+FString AILoginService::GetLoggedInUserPassword()
+{	
+	return FString(EzAccount.getPassword().getCString());
+}
+
+void AILoginService::Login(FString UserId,FString Password)
+{
+	UE_SUCCESS_LOG(TEXT("start gs2 login"))
+
 	ProfilePtr->login(
-		[this,&onComplete](gs2::ez::Profile::AsyncLoginResult loginedResult)
+		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
 	{
 		if (loginedResult.getError())
 		{
-			UE_LOG(LogTemp, Error, TEXT("failed gs2 login"));
+			UE_ERROR_LOG(TEXT("failed gs2 login"))
 			return;
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("successed gs2 login"));
-		//onComplete(loginedResult);
-
+		UE_SUCCESS_LOG(TEXT("successed gs2 login"));
 		GameSession = *loginedResult.getResult();
+		CompleteLoggedInDelegate.Broadcast();
 	},
 		gs2::ez::Gs2AccountAuthenticator(
 			ProfilePtr->getGs2Session(),
-			TCHAR_TO_ANSI(*accountNamespaceName),
-			TCHAR_TO_ANSI(*accountEncryptionKeyId),
-			EzAccount.getUserId(),
-			EzAccount.getPassword()
+			TCHAR_TO_ANSI(*AccountNamespaceName),
+			TCHAR_TO_ANSI(*AccountEncryptionKeyId),
+			TCHAR_TO_ANSI(*UserId),
+			TCHAR_TO_ANSI(*Password)
 		)
 		);
 }
 
-void AILoginService::FinalizeProfile(std::function<void(void)> onComplete)
+void AILoginService::Finalize()
 {
-	UE_LOG(LogTemp, Log, TEXT("start gs2 finalize"));
+	UE_SUCCESS_LOG(TEXT("start gs2 finalize"));
 	ProfilePtr->finalize(
-		[this,&onComplete]()
+		[this]()
 	{
-		UE_LOG(LogTemp, Log, TEXT("successed gs2 finalize"));
-		//onComplete();
+		UE_ERROR_LOG(TEXT("successed gs2 finalize"));
+		CompleteLoggedOutDelegate.Broadcast();
 	}
 	);
 }
@@ -116,24 +124,4 @@ void AILoginService::FinalizeProfile(std::function<void(void)> onComplete)
 void AILoginService::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AILoginService::Login()
-{
-	InitializeProfile([this](gs2::ez::Profile::AsyncInitializeResult initializedProfileResult)
-	{
-		CreateAccount([this](gs2::ez::account::AsyncEzCreateResult createdResult) {
-			//EzAccount = createdResult.getResult()->getItem();
-			LoginByProfile([this](gs2::ez::Profile::AsyncLoginResult loginedResult) {
-				//GameSession = *loginedResult.getResult();
-			});
-		});
-	});
-}
-
-void AILoginService::Logout()
-{
-	FinalizeProfile([this]() {
-		//TODO: finalize anything
-	});
 }

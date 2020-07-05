@@ -3,3 +3,4 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Geister/Public/GeiserSaveData.h"
