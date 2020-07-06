@@ -1,25 +1,25 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GeiserSaveData.h"
+#include "GS2LoginSaveData.h"
 
-UGeiserSaveData::UGeiserSaveData()
+UGS2LoginSaveData::UGS2LoginSaveData()
 {
 	
 }
 
-void UGeiserSaveData::SetBuildDatas(FString SavedUserId, FString SavedPassword)
+void UGS2LoginSaveData::SetBuildDatas(FString SavedUserId, FString SavedPassword)
 {
 	this->UserId = SavedUserId;
 	this->Password = SavedPassword;
 }
 
-FString UGeiserSaveData::GetUserId()
+FString UGS2LoginSaveData::GetUserId()
 {
 	return this->UserId;
 }
 
-FString UGeiserSaveData::GetPassword()
+FString UGS2LoginSaveData::GetPassword()
 {
 	return this->Password;
 }

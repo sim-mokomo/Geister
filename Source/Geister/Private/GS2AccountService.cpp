@@ -58,10 +58,9 @@ FString AGS2AccountService::GetLoggedInUserPassword()
 	return FString(EzAccount.getPassword().getCString());
 }
 
-void AGS2AccountService::Login(UAccountLoginDTO* loginDTO)
+void AGS2AccountService::Login(FString UserId, FString Password)
 {
 	UE_SUCCESS_LOG(TEXT("start gs2 login"))
-	auto gs2LoginDTO = Cast<UGS2AccountLoginDTO>(loginDTO);
 
 	ProfilePtr->login(
 		[this](gs2::ez::Profile::AsyncLoginResult loginedResult)
@@ -81,8 +80,8 @@ void AGS2AccountService::Login(UAccountLoginDTO* loginDTO)
 			ProfilePtr->getGs2Session(),
 			TCHAR_TO_ANSI(*AccountNamespaceName),
 			TCHAR_TO_ANSI(*AccountEncryptionKeyId),
-			TCHAR_TO_ANSI(*gs2LoginDTO->GetUserId()),
-			TCHAR_TO_ANSI(*gs2LoginDTO->GetPassword())
+			TCHAR_TO_ANSI(*UserId),
+			TCHAR_TO_ANSI(*Password)
 		)
 		);
 }

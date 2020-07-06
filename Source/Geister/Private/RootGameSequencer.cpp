@@ -5,13 +5,10 @@
 
 void ARootGameSequencer::OnCompleteInitializedProfile()
 {
-	if (this->saveService->ExistLoginSaveData())
+	if (this->loginDataRepository->ExistSaveData())
 	{
-		FString UserId, Password;
-		saveService->GetLoginSaveData(UserId,Password);
-		auto gs2AccountLoginDTO = NewObject<UGS2AccountLoginDTO>();
-		gs2AccountLoginDTO->Initialize(UserId, Password);
-		this->loginService->Login(gs2AccountLoginDTO);
+		auto saveData = loginDataRepository->Load();
+		this->loginService->Login(saveData->GetUserId(),saveData->GetPassword());
 	}
 	else
 	{
@@ -23,13 +20,8 @@ void ARootGameSequencer::OnCompleteCreatedAccount()
 {
 	auto userId = this->loginService->GetLoggedInUserId();
 	auto userPassword = this->loginService->GetLoggedInUserPassword();
-	this->saveService->SaveLoginData(userId,userPassword);
-
-	FString saveUserId, saveUserPassword;
-	this->saveService->GetLoginSaveData(saveUserId,saveUserPassword);
-	auto gs2AccountLoginDTO = NewObject<UGS2AccountLoginDTO>();
-	gs2AccountLoginDTO->Initialize(saveUserId, saveUserPassword);
-	this->loginService->Login(gs2AccountLoginDTO);
+	this->loginDataRepository->Save(userId, userPassword);
+	this->loginService->Login(userId,userPassword);
 }
 
 // Sets default values
@@ -63,8 +55,8 @@ AGS2AccountService* ARootGameSequencer::GetAccountService()
 	return this->loginService;
 }
 
-AISaveService* ARootGameSequencer::GetAccountSaveService()
+AGS2LoginDataRepository* ARootGameSequencer::GetAccountSaveService()
 {
-	return this->saveService;
+	return this->loginDataRepository;
 }
 

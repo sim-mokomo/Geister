@@ -1,34 +1,34 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ISaveService.h"
+#include "GS2LoginDataRepository.h"
 
 // Sets default values
-AISaveService::AISaveService()
+AGS2LoginDataRepository::AGS2LoginDataRepository()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	SaveSlotName = "GeisterLoginAccountSaveData";
-	SaveUserIndex = 0;
+
 }
 
 // Called when the game starts or when spawned
-void AISaveService::BeginPlay()
+void AGS2LoginDataRepository::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AISaveService::Tick(float DeltaTime)
+void AGS2LoginDataRepository::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
-void AISaveService::SaveLoginData(FString UserId, FString Password)
+void AGS2LoginDataRepository::Save(FString UserId,FString Password)
 {
 	UE_LOG(LogTemp, Display, TEXT("start save account data"));
-	auto saveGameInstance = Cast<UGeiserSaveData>(UGameplayStatics::CreateSaveGameObject(UGeiserSaveData::StaticClass()));
+	auto saveGameInstance = Cast<UGS2LoginSaveData>(UGameplayStatics::CreateSaveGameObject(UGS2LoginSaveData::StaticClass()));
 	if (saveGameInstance == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("failed create save instance"));
@@ -46,16 +46,14 @@ void AISaveService::SaveLoginData(FString UserId, FString Password)
 	UE_LOG(LogTemp, Display, TEXT("successed save login data"));
 }
 
-bool AISaveService::ExistLoginSaveData()
+bool AGS2LoginDataRepository::ExistSaveData()
 {
 	return UGameplayStatics::DoesSaveGameExist(this->SaveSlotName, this->SaveUserIndex);
 }
 
-void AISaveService::GetLoginSaveData(FString& UserId, FString& Password)
+UGS2LoginSaveData* AGS2LoginDataRepository::Load()
 {
 	auto saveData = UGameplayStatics::LoadGameFromSlot(this->SaveSlotName, this->SaveUserIndex);
-	auto geisterSaveData = Cast<UGeiserSaveData>(saveData);
-	UserId = geisterSaveData->GetUserId();
-	Password = geisterSaveData->GetPassword();
+	auto geisterSaveData = Cast<UGS2LoginSaveData>(saveData);
+	return geisterSaveData;
 }
-

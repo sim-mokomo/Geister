@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Geister/Public/GS2AccountService.h"
-#include "Geister/Public/ISaveService.h"
+#include "Geister/Public/GS2LoginDataRepository.h"
 #include "Engine/Engine.h"
 #include "RootGameSequencer.generated.h"
 
@@ -18,7 +18,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	AGS2AccountService* loginService;
 	UPROPERTY(EditAnywhere)
-	AISaveService* saveService;
+	AGS2LoginDataRepository* loginDataRepository;
 	UFUNCTION()
 	void OnCompleteInitializedProfile();
 	UFUNCTION()
@@ -36,8 +36,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	AGS2AccountService* GetAccountService();
-	UFUNCTION()
-	AISaveService* GetAccountSaveService();
+	UFUNCTION(BlueprintPure)
+	AGS2LoginDataRepository* GetAccountSaveService();
 };

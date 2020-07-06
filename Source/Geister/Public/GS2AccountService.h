@@ -9,8 +9,6 @@
 #include "Engine/Engine.h"
 #include "Geister/Public/MacroLibrary.h"
 #include "DelegateCombinations.h"
-#include "Geister/Public/AccountServiceInterface.h"
-#include "Geister/Public/GS2AccountLoginDTO.h"
 #include "GS2AccountService.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteInitializedProfile);
@@ -19,7 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteLoggedIn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompleteLoggedOut);
 
 UCLASS()
-class GEISTER_API AGS2AccountService : public AActor, public IAccountServiceInterface
+class GEISTER_API AGS2AccountService : public AActor
 {
 	GENERATED_BODY()
 
@@ -58,12 +56,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-		virtual void Initialize() override;
+		void Initialize();
 	UFUNCTION()
-		virtual void CreateAccount() override;
-		virtual void Login(UAccountLoginDTO* loginDTO) override;
+		void CreateAccount();
+		void Login(FString UserId, FString Password);
 	UFUNCTION()
-		virtual void Logout() override;
+		void Logout();
 	UFUNCTION()
 		FString GetLoggedInUserId();
 	UFUNCTION()

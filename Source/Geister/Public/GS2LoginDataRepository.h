@@ -4,25 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Geister/Public/GeiserSaveData.h"
 #include "Kismet/GameplayStatics.h"
-#include "ISaveService.generated.h"
+#include "Geister/Public/GS2LoginSaveData.h"
+#include "GS2LoginDataRepository.generated.h"
 
 UCLASS()
-class GEISTER_API AISaveService : public AActor
+class GEISTER_API AGS2LoginDataRepository : public AActor
 {
 	GENERATED_BODY()
-
-private:
-	UPROPERTY(EditAnywhere, Category = "Gesiter|SaveData")
-		FString SaveSlotName;
-
-	UPROPERTY(EditAnywhere, Category = "Geister|SaveData")
-		uint32 SaveUserIndex;
 	
 public:	
+	UPROPERTY(EditAnywhere, Category = "Geister|SaveData")
+		FString SaveSlotName;
+	UPROPERTY(EditAnywhere, Category = "Geister|SaveData")
+		uint32 SaveUserIndex;
 	// Sets default values for this actor's properties
-	AISaveService();
+	AGS2LoginDataRepository();
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,12 +29,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category="Geister|Save")
-	void SaveLoginData(FString UserId, FString Password);
+	UFUNCTION(BlueprintCallable, Category = "Geister|Save")
+		void Save(FString UserId, FString Password);
 
 	UFUNCTION(BlueprintPure, Category = "Geister|Save")
-	bool ExistLoginSaveData();
+		bool ExistSaveData();
 
 	UFUNCTION(BlueprintPure, Category = "Geister|Save")
-		void GetLoginSaveData(FString& UserId, FString& Password);
+		UGS2LoginSaveData* Load();
 };
