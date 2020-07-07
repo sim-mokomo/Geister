@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/Engine.h"
-#include "MacroLibrary.generated.h"
+#include "LogMacroLibrary.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GEISTER_API UMacroLibrary : public UObject
+class GEISTER_API ULogMacroLibrary : public UObject
 {
 	GENERATED_BODY()
 };
