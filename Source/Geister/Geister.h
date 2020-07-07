@@ -3,4 +3,3 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Geister/Public/GS2LoginSaveData.h"
