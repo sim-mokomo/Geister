@@ -15,6 +15,9 @@ ARootGameSequencer::ARootGameSequencer()
 void ARootGameSequencer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	LoginAccountProvider->Login();
+	LoginAccountProvider->Logout();
 }
 
 // Called every frame
