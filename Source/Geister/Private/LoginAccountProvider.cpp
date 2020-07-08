@@ -25,6 +25,10 @@ void ALoginAccountProvider::Tick(float DeltaTime)
 
 }
 
+void ALoginAccountProvider::Initialize()
+{
+}
+
 void ALoginAccountProvider::Login()
 {
 }

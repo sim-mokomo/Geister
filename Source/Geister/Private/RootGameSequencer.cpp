@@ -16,12 +16,24 @@ void ARootGameSequencer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LoginAccountProvider->Initialize();
+	LoginAccountProvider->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedLoggedin);
+	LoginAccountProvider->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedLoggedin);
 	LoginAccountProvider->Login();
-	LoginAccountProvider->Logout();
 }
 
 // Called every frame
 void ARootGameSequencer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ARootGameSequencer::SuccessedLoggedin()
+{
+	UE_SUCCESS_LOG("sucessed login");
+}
+
+void ARootGameSequencer::FailedLoggedin()
+{
+	UE_SUCCESS_LOG("sucessed logout");
 }

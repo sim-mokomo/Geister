@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "LoginAccountProvider.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSuccess);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnError);
+
 UCLASS()
 class GEISTER_API ALoginAccountProvider : public AActor
 {
@@ -22,6 +25,13 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Initialize();
+
+	UPROPERTY()
+    FOnSuccess OnSuccessDelegate;
+	UPROPERTY()
+    FOnError OnErrorDelegate;
 
 	virtual void Login();
 	virtual void Logout();

@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
+#include "LogMacroLibrary.h"
 #include "RootGameSequencer.generated.h"
 
 UCLASS()
@@ -29,4 +30,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+private:
+	UFUNCTION()
+	void SuccessedLoggedin();
+	UFUNCTION()
+	void FailedLoggedin();
 };

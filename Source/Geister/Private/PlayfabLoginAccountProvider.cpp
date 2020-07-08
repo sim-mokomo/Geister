@@ -15,7 +15,6 @@ APlayfabLoginAccountProvider::APlayfabLoginAccountProvider()
 void APlayfabLoginAccountProvider::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -27,11 +26,34 @@ void APlayfabLoginAccountProvider::Tick(float DeltaTime)
 
 void APlayfabLoginAccountProvider::Login()
 {
-	UE_SUCCESS_LOG("successed login");
+	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
+	request.CustomId = TEXT("TestUser");
+	request.CreateAccount = true;
+
+	clientApi->LoginWithCustomID(request,
+		PlayFab::UPlayFabClientAPI::FLoginWithCustomIDDelegate::CreateUObject(this, &APlayfabLoginAccountProvider::OnSuccess),
+			PlayFab::FPlayFabErrorDelegate::CreateUObject(this,&APlayfabLoginAccountProvider::OnError));
 }
 
 void APlayfabLoginAccountProvider::Logout()
 {
-	UE_SUCCESS_LOG("sucessed logout");
+	
 }
 
+void APlayfabLoginAccountProvider::Initialize()
+{
+	clientApi = IPlayFabModuleInterface::Get().GetClientAPI();
+	clientApi->SetTitleId(TEXT(TITLEID));
+}
+
+void APlayfabLoginAccountProvider::OnSuccess(const PlayFab::ClientModels::FLoginResult& LoggedinResult)
+{	
+	this->loggedinResult = LoggedinResult;
+	OnSuccessDelegate.Broadcast();
+}
+
+void APlayfabLoginAccountProvider::OnError(const PlayFab::FPlayFabCppError& errorResult)
+{
+	this->loggedInErrorResult = errorResult;
+	OnErrorDelegate.Broadcast();
+}

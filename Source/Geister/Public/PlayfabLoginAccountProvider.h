@@ -6,6 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "LogMacroLibrary.h"
 #include "LoginAccountProvider.h"
+#include "PlayFab.h"
+#include "Core/PlayFabError.h"
+#include "Core/PlayFabClientDataModels.h"
+#include "Core/PlayFabClientAPI.h"
+#include "SecretConfiguration.h"
 #include "PlayfabLoginAccountProvider.generated.h"
 
 UCLASS()
@@ -29,4 +34,16 @@ public:
 	virtual void Login() override;
 	UFUNCTION(BlueprintCallable)
 	virtual void Logout() override;
+	UFUNCTION(BlueprintCallable)
+	virtual void Initialize() override;
+	
+	void OnSuccess(const PlayFab::ClientModels::FLoginResult& LoggedinResult);
+	void OnError(const PlayFab::FPlayFabCppError& errorResult);
+	PlayFab::ClientModels::FLoginResult GetLoggedinResult() {return loggedinResult;}
+	PlayFab::FPlayFabCppError GetLoggedinError() {return loggedInErrorResult;}
+	
+	private:
+	PlayFabClientPtr clientApi;
+	PlayFab::ClientModels::FLoginResult loggedinResult;
+	PlayFab::FPlayFabCppError loggedInErrorResult;
 };
