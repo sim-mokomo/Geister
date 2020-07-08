@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LoginAccountProvider.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
+#include "LogMacroLibrary.h"
 #include "RootGameSequencer.generated.h"
 
 UCLASS()
@@ -17,6 +19,9 @@ private:
 public:	
 	// Sets default values for this actor's properties
 	ARootGameSequencer();
+	
+	UPROPERTY(EditAnywhere)
+	ALoginAccountProvider* LoginAccountProvider;
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,4 +30,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+private:
+	UFUNCTION()
+	void SuccessedLoggedin();
+	UFUNCTION()
+	void FailedLoggedin();
 };
