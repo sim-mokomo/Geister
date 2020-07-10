@@ -15,6 +15,10 @@ APlayfabLoginAccountProvider::APlayfabLoginAccountProvider()
 void APlayfabLoginAccountProvider::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetActorLabel("PlayfabLoginAccountProvider");
+
+	clientApi = initializeData.clientApi;
 }
 
 // Called every frame
@@ -38,12 +42,6 @@ void APlayfabLoginAccountProvider::Login()
 void APlayfabLoginAccountProvider::Logout()
 {
 	
-}
-
-void APlayfabLoginAccountProvider::Initialize()
-{
-	clientApi = IPlayFabModuleInterface::Get().GetClientAPI();
-	clientApi->SetTitleId(TEXT(TITLEID));
 }
 
 void APlayfabLoginAccountProvider::OnSuccess(const PlayFab::ClientModels::FLoginResult& LoggedinResult)

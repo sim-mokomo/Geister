@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "BattleSaveDataRepository.h"
 #include "CoreMinimal.h"
 #include "LoginAccountProvider.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
 #include "LogMacroLibrary.h"
+#include "SecretConfiguration.h"
 #include "RootGameSequencer.generated.h"
 
 UCLASS()
@@ -20,8 +22,9 @@ public:
 	// Sets default values for this actor's properties
 	ARootGameSequencer();
 	
-	UPROPERTY(EditAnywhere)
 	ALoginAccountProvider* LoginAccountProvider;
+	ABattleSaveDataRepository* BattleSaveDataRepository;
+	PlayFabClientPtr ClientApi;
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,4 +38,8 @@ private:
 	void SuccessedLoggedin();
 	UFUNCTION()
 	void FailedLoggedin();
+	UFUNCTION()
+	void SuccessedSavingBattleRate();
+	UFUNCTION()
+	void FailedSavingBattleRate();
 };
