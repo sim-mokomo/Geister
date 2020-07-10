@@ -3,6 +3,8 @@
 
 #include "RootGameSequencer.h"
 
+#include "PlayfabLoginAccountProvider.h"
+
 // Sets default values
 ARootGameSequencer::ARootGameSequencer()
 {
@@ -17,6 +19,12 @@ void ARootGameSequencer::BeginPlay()
 	Super::BeginPlay();
 
 	LoginAccountProvider->Initialize();
+	auto playfabLoginAccountProvider = GetWorld()->SpawnActorDeferred<APlayfabLoginAccountProvider>(APlayfabLoginAccountProvider::StaticClass(),spawnTransform);
+	FPlayfabLoginAccountInitializeData playfabLoginAccountInitializeData(ClientApi);
+	playfabLoginAccountProvider->SetInitializeData(playfabLoginAccountInitializeData);
+	playfabLoginAccountProvider->FinishSpawning(spawnTransform);
+	
+	LoginAccountProvider = playfabLoginAccountProvider;
 	LoginAccountProvider->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedLoggedin);
 	LoginAccountProvider->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedLoggedin);
 	LoginAccountProvider->Login();
@@ -30,7 +38,7 @@ void ARootGameSequencer::Tick(float DeltaTime)
 
 void ARootGameSequencer::SuccessedLoggedin()
 {
-	UE_SUCCESS_LOG("sucessed login");
+	UE_SUCCESS_LOG("sucessed login");	
 }
 
 void ARootGameSequencer::FailedLoggedin()

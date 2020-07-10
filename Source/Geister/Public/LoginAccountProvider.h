@@ -9,6 +9,17 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSuccess);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnError);
 
+USTRUCT()
+struct FLoginAccountInitializeData
+{
+	GENERATED_BODY()
+public:
+    FLoginAccountInitializeData()
+    {
+		
+    };
+};
+
 UCLASS()
 class GEISTER_API ALoginAccountProvider : public AActor
 {
@@ -25,8 +36,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void Initialize();
 
 	UPROPERTY()
     FOnSuccess OnSuccessDelegate;

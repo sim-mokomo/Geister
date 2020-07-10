@@ -13,6 +13,23 @@
 #include "SecretConfiguration.h"
 #include "PlayfabLoginAccountProvider.generated.h"
 
+USTRUCT()
+struct FPlayfabLoginAccountInitializeData : public FLoginAccountInitializeData
+{
+	GENERATED_BODY()
+public:
+	FPlayfabLoginAccountInitializeData()
+	{
+		
+	}
+    FPlayfabLoginAccountInitializeData(PlayFabClientPtr clientApi)
+    {
+		this->clientApi = clientApi;
+    };
+	PlayFabClientPtr clientApi;
+};
+
+
 UCLASS()
 class GEISTER_API APlayfabLoginAccountProvider : public ALoginAccountProvider
 {
@@ -34,16 +51,16 @@ public:
 	virtual void Login() override;
 	UFUNCTION(BlueprintCallable)
 	virtual void Logout() override;
-	UFUNCTION(BlueprintCallable)
-	virtual void Initialize() override;
 	
 	void OnSuccess(const PlayFab::ClientModels::FLoginResult& LoggedinResult);
 	void OnError(const PlayFab::FPlayFabCppError& errorResult);
 	PlayFab::ClientModels::FLoginResult GetLoggedinResult() {return loggedinResult;}
 	PlayFab::FPlayFabCppError GetLoggedinError() {return loggedInErrorResult;}
+	void SetInitializeData(FPlayfabLoginAccountInitializeData data) {initializeData = data;}
 	
 	private:
 	PlayFabClientPtr clientApi;
 	PlayFab::ClientModels::FLoginResult loggedinResult;
 	PlayFab::FPlayFabCppError loggedInErrorResult;
+	FPlayfabLoginAccountInitializeData initializeData;
 };

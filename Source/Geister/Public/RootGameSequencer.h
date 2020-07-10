@@ -20,8 +20,8 @@ public:
 	// Sets default values for this actor's properties
 	ARootGameSequencer();
 	
-	UPROPERTY(EditAnywhere)
 	ALoginAccountProvider* LoginAccountProvider;
+	PlayFabClientPtr ClientApi;
 
 protected:
 	// Called when the game starts or when spawned
