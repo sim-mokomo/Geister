@@ -41,5 +41,5 @@ void AScreenPresenter::CreateRegistedWidget()
 
 ScreenPresenterType AScreenPresenter::GetSelfScreenPresenterType()
 {
-	return None;
+	return ScreenPresenterType_None;
 }

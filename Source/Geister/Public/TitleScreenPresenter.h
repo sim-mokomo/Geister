@@ -17,4 +17,5 @@ public:
 	ScreenPresenterType GetSelfScreenPresenterType() override;
 private:
 	GENERATED_BODY()
+	
 };

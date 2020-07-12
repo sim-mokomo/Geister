@@ -4,6 +4,7 @@
 
 #include "BattleSaveDataRepository.h"
 #include "CoreMinimal.h"
+#include "GameSequenceSelector.h"
 #include "LoginAccountProvider.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
@@ -14,6 +15,8 @@
 #include "PlayfabBattleSaveDataRepository.h"
 #include "PlayfabLoginAccountProvider.h"
 #include "UserWidget.h"
+#include "Kismet/GameplayStatics.h"
+
 #include "RootGameSequencer.generated.h"
 
 UCLASS()
@@ -25,10 +28,16 @@ private:
 public:	
 	// Sets default values for this actor's properties
 	ARootGameSequencer();
-	
+
+	UPROPERTY()
 	ALoginAccountProvider* LoginAccountProvider;
+	UPROPERTY()
 	ABattleSaveDataRepository* BattleSaveDataRepository;
 	PlayFabClientPtr ClientApi;
+	UPROPERTY(EditAnywhere)
+	AGameSequenceSelector* GameSequenceSelector;
+	UPROPERTY(EditAnywhere)
+	AScreenManager* ScreenManager;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,7 +56,11 @@ private:
 	void SuccessedSavingBattleRate();
 	UFUNCTION()
 	void FailedSavingBattleRate();
-
-	UPROPERTY(EditAnywhere)
-	AScreenManager* ScreenManager;
 };
+
+static ARootGameSequencer* GetRootGameSequnecer(const UObject* WorldContextObject) 
+{
+	auto RootGameSequencerActor = UGameplayStatics::GetActorOfClass(WorldContextObject,ARootGameSequencer::StaticClass());
+	auto RootGameSequencer = Cast<ARootGameSequencer>(RootGameSequencerActor);\
+	return RootGameSequencer;
+}

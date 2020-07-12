@@ -10,5 +10,5 @@ void ATitleScreenPresenter::OnAddedToScreen()
 
 ScreenPresenterType ATitleScreenPresenter::GetSelfScreenPresenterType()
 {
-    return Title;
+    return ScreenPresenterType_Title;
 }

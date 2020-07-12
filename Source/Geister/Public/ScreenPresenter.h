@@ -9,9 +9,9 @@
 UENUM()
 enum ScreenPresenterType
 {
-	None,
-	Title,
-	All,
+	ScreenPresenterType_None,
+	ScreenPresenterType_Title,
+	ScreenPresenterType_All,
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAddedToScreen);
