@@ -3,9 +3,7 @@
 
 #include "RootGameSequencer.h"
 
-
-#include "PlayfabBattleSaveDataRepository.h"
-#include "PlayfabLoginAccountProvider.h"
+#include "TitleScreenPresenter.h"
 
 // Sets default values
 ARootGameSequencer::ARootGameSequencer()
@@ -41,12 +39,18 @@ void ARootGameSequencer::BeginPlay()
 	LoginAccountProvider->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedLoggedin);
 	LoginAccountProvider->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedLoggedin);
 	LoginAccountProvider->Login();
+	
+	ATitleScreenPresenter* TitleScreenPresenter;
+	ScreenManager->DefinedScreenPresenterTable.FindItemByClass<ATitleScreenPresenter>(&TitleScreenPresenter);
+	ScreenManager->AddScreen(TitleScreenPresenter);
 }
 
 // Called every frame
 void ARootGameSequencer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	ScreenManager->Tick(DeltaTime);
 }
 
 void ARootGameSequencer::SuccessedLoggedin()

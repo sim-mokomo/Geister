@@ -10,6 +10,10 @@
 #include "Engine/Engine.h"
 #include "LogMacroLibrary.h"
 #include "SecretConfiguration.h"
+#include "ScreenManager.h"
+#include "PlayfabBattleSaveDataRepository.h"
+#include "PlayfabLoginAccountProvider.h"
+#include "UserWidget.h"
 #include "RootGameSequencer.generated.h"
 
 UCLASS()
@@ -33,6 +37,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
 private:
 	UFUNCTION()
 	void SuccessedLoggedin();
@@ -42,4 +47,7 @@ private:
 	void SuccessedSavingBattleRate();
 	UFUNCTION()
 	void FailedSavingBattleRate();
+
+	UPROPERTY(EditAnywhere)
+	AScreenManager* ScreenManager;
 };
