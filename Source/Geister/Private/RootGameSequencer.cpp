@@ -40,8 +40,7 @@ void ARootGameSequencer::BeginPlay()
 	LoginAccountProvider->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedLoggedin);
 	LoginAccountProvider->Login();
 	
-	ATitleScreenPresenter* TitleScreenPresenter;
-	ScreenManager->DefinedScreenPresenterTable.FindItemByClass<ATitleScreenPresenter>(&TitleScreenPresenter);
+	auto TitleScreenPresenter = ScreenManager->GetPresenter(Title);
 	ScreenManager->AddScreen(TitleScreenPresenter);
 }
 

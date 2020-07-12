@@ -44,3 +44,13 @@ void AScreenManager::AllDispose()
 {
 }
 
+AScreenPresenter* AScreenManager::GetPresenter(ScreenPresenterType type)
+{
+	auto distPresenterPtr = DefinedScreenPresenterTable.FindByPredicate([&type](AScreenPresenter* x)
+	{
+		return x->GetSelfScreenPresenterType() == type;
+	});
+
+	return *distPresenterPtr;
+}
+

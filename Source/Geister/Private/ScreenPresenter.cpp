@@ -39,3 +39,7 @@ void AScreenPresenter::CreateRegistedWidget()
 	createdWidget->AddToViewport();
 }
 
+ScreenPresenterType AScreenPresenter::GetSelfScreenPresenterType()
+{
+	return None;
+}

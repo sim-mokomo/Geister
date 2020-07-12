@@ -7,3 +7,8 @@ void ATitleScreenPresenter::OnAddedToScreen()
 {
     
 }
+
+ScreenPresenterType ATitleScreenPresenter::GetSelfScreenPresenterType()
+{
+    return Title;
+}

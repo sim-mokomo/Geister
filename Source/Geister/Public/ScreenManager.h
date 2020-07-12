@@ -27,9 +27,11 @@ public:
 	void AddScreen(AScreenPresenter* AddScreenPresenter);
 	void DisposeScreen();
 	void AllDispose();
+	UFUNCTION()
+    AScreenPresenter* GetPresenter(ScreenPresenterType type);
+	private:
 	UPROPERTY(EditAnywhere)
 	TArray<AScreenPresenter*> DefinedScreenPresenterTable;
-	private:
 	UPROPERTY()
 	TArray<AScreenPresenter*> StackingScreenPresenters;
 };

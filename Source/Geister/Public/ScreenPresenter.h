@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "ScreenPresenter.generated.h"
 
+UENUM()
+enum ScreenPresenterType
+{
+	None,
+	Title,
+	All,
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAddedToScreen);
 
 UCLASS()
@@ -31,6 +39,10 @@ public:
 	virtual void OnAddedToScreen();
 	UFUNCTION()
 	void CreateRegistedWidget();
+	UFUNCTION()
+	virtual ScreenPresenterType GetSelfScreenPresenterType();
+	
+
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> widget;
