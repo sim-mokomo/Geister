@@ -25,32 +25,31 @@ void AScreenManager::Tick(float DeltaTime)
 	
 	for (auto StackingScreenPresenter : StackingScreenPresenters)
 	{
-		
+		StackingScreenPresenter->Tick(DeltaTime);
 	}
 }
 
-void AScreenManager::AddScreen(AScreenPresenter* AddScreenPresenter)
+void AScreenManager::AddScreen(UClass* AddScreenPresenterClass)
 {
-	StackingScreenPresenters.Add(AddScreenPresenter);
-	AddScreenPresenter->CreateRegistedWidget();
-	AddScreenPresenter->OnAddedToScreenDelegate.Broadcast();
+	auto DistPresenterPtr = DefinedUserWidgets.FindByPredicate([&](AScreenPresenter* x)
+	{
+		return AddScreenPresenterClass == x->GetClass();
+	});
+	auto DistPresenter = *DistPresenterPtr;
+	StackingScreenPresenters.Add(DistPresenter);
+	DistPresenter->Setup();
 }
 
 void AScreenManager::DisposeScreen()
 {
+	
 }
 
 void AScreenManager::AllDispose()
 {
-}
-
-AScreenPresenter* AScreenManager::GetPresenter(ScreenPresenterType type)
-{
-	auto distPresenterPtr = DefinedScreenPresenterTable.FindByPredicate([&type](AScreenPresenter* x)
+	for (auto StackingScreenPresenter : StackingScreenPresenters)
 	{
-		return x->GetSelfScreenPresenterType() == type;
-	});
-
-	return *distPresenterPtr;
+		StackingScreenPresenter->Dispose();
+	}
 }
 

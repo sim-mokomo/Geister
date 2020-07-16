@@ -16,7 +16,6 @@
 #include "PlayfabLoginAccountProvider.h"
 #include "UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-
 #include "RootGameSequencer.generated.h"
 
 UCLASS()
@@ -46,6 +45,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	AScreenManager* GetScreenManager() const {return ScreenManager;}
 	
 private:
 	UFUNCTION()

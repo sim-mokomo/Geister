@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UserWidget.h"
 #include "GameFramework/Actor.h"
 #include "ScreenPresenter.generated.h"
 
@@ -28,24 +29,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> widget;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY()
-	FAddedToScreen OnAddedToScreenDelegate;
 	UFUNCTION()
-	virtual void OnAddedToScreen();
+	virtual void Setup();
 	UFUNCTION()
-	void CreateRegistedWidget();
-	UFUNCTION()
-	virtual ScreenPresenterType GetSelfScreenPresenterType();
-	
-
-private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> widget;
-	UPROPERTY(EditAnywhere)
-	UUserWidget* createdWidget;
+	virtual void Dispose();
 };

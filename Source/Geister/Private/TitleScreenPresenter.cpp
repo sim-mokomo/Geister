@@ -2,13 +2,23 @@
 
 
 #include "TitleScreenPresenter.h"
+#include "TitleWidget.h"
 
-void ATitleScreenPresenter::OnAddedToScreen()
+void ATitleScreenPresenter::BeginPlay()
 {
-    
 }
 
-ScreenPresenterType ATitleScreenPresenter::GetSelfScreenPresenterType()
+void ATitleScreenPresenter::Tick(float DeltaTime)
 {
-    return ScreenPresenterType_Title;
+}
+
+void ATitleScreenPresenter::Setup()
+{
+    auto titleUserWidget = CreateWidget<UUserWidget>(GetWorld(),widget);
+    auto titleWidget = Cast<UTitleWidget>(titleUserWidget);
+    titleWidget->AddToPlayerScreen();
+}
+
+void ATitleScreenPresenter::Dispose()
+{
 }

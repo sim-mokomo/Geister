@@ -9,7 +9,7 @@
 AScreenPresenter::AScreenPresenter()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 }
 
@@ -18,7 +18,6 @@ void AScreenPresenter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnAddedToScreenDelegate.AddDynamic(this,&AScreenPresenter::OnAddedToScreen);
 }
 
 // Called every frame
@@ -28,18 +27,10 @@ void AScreenPresenter::Tick(float DeltaTime)
 
 }
 
-void AScreenPresenter::OnAddedToScreen()
+void AScreenPresenter::Setup()
 {
-	
 }
 
-void AScreenPresenter::CreateRegistedWidget()
+void AScreenPresenter::Dispose()
 {
-	createdWidget = CreateWidget<UUserWidget>(GetWorld(),this->widget);
-	createdWidget->AddToViewport();
-}
-
-ScreenPresenterType AScreenPresenter::GetSelfScreenPresenterType()
-{
-	return ScreenPresenterType_None;
 }

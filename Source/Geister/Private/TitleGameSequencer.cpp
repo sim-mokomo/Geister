@@ -3,13 +3,13 @@
 
 #include "TitleGameSequencer.h"
 
+#include "TitleScreenPresenter.h"
+
 
 void ATitleGameSequencer::StartSequence()
 {
-    auto Root = GetRootGameSequnecer(GetWorld());
-    auto ScreenManager = Root->ScreenManager;
-    auto TitlePresenter = ScreenManager->GetPresenter(ScreenPresenterType_Title);
-    ScreenManager->AddScreen(TitlePresenter);
+    auto ScreenManager = GetRootGameSequnecer(GetWorld())->GetScreenManager();
+    ScreenManager->AddScreen(ATitleScreenPresenter::StaticClass());
 }
 
 void ATitleGameSequencer::EndSequence()

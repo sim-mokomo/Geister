@@ -12,10 +12,13 @@
 UCLASS()
 class GEISTER_API ATitleScreenPresenter : public AScreenPresenter
 {
-public:
-	void OnAddedToScreen() override;
-	ScreenPresenterType GetSelfScreenPresenterType() override;
 private:
 	GENERATED_BODY()
-	
+
+protected:
+	void BeginPlay() override;
+public:
+	void Tick(float DeltaTime) override;
+	void Setup() override;
+	void Dispose() override;
 };

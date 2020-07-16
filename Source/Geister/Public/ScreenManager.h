@@ -24,16 +24,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void AddScreen(AScreenPresenter* AddScreenPresenter);
+	void AddScreen(UClass* AddScreenPresenterClass);
 	void DisposeScreen();
 	void AllDispose();
-	UFUNCTION()
-    AScreenPresenter* GetPresenter(ScreenPresenterType type);
 	private:
-	UPROPERTY(EditAnywhere)
-	TArray<AScreenPresenter*> DefinedScreenPresenterTable;
 	UPROPERTY()
 	TArray<AScreenPresenter*> StackingScreenPresenters;
+	UPROPERTY(EditAnywhere)
+	TArray<AScreenPresenter*> DefinedUserWidgets;
 };
 
 
