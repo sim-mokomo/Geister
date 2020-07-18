@@ -15,9 +15,6 @@ APlayfabLoginAccountProvider::APlayfabLoginAccountProvider()
 void APlayfabLoginAccountProvider::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetActorLabel("PlayfabLoginAccountProvider");
-
 	clientApi = initializeData.clientApi;
 }
 
