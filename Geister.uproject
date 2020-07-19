@@ -24,6 +24,10 @@
 		{
 			"Name": "RiderLink",
 			"Enabled": true
+		},
+		{
+			"Name": "WindowsMoviePlayer",
+			"Enabled": false
 		}
 	]
 }
