@@ -2,7 +2,6 @@
 
 
 #include "RootGameSequencer.h"
-#include "JsonFunctionLibrary.h"
 // #include "TitleScreenPresenter.h"
 
 // Sets default values
@@ -27,6 +26,7 @@ void ARootGameSequencer::BeginPlay()
 	// BattleSaveDataRepository->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedSavingBattleRate);
 	// BattleSaveDataRepository->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedSavingBattleRate);
 
+	//TODO: ローカルにログインデータを保存
 	FString jsonFullPath = FPaths::ProjectDir().Append("SecretLoginConfiguration").Append(TEXT(".json"));
 	FSecretLoginConfiguration secretLoginConfiguration;
 	UJsonFunctionLibrary::CreateUStructFromJsonPath<FSecretLoginConfiguration>(jsonFullPath, &secretLoginConfiguration, 0, 0);
@@ -57,20 +57,20 @@ void ARootGameSequencer::Tick(float DeltaTime)
 
 void ARootGameSequencer::SuccessedLoggedin()
 {
-	UE_SUCCESS_LOG("sucessed login");	
+	ULogFunctionLibrary::DisplayLog(ELogType::Success, "successed login");
 }
 
 void ARootGameSequencer::FailedLoggedin()
 {
-	UE_SUCCESS_LOG("failed login");
+	ULogFunctionLibrary::DisplayLog(ELogType::Error, "failed login");
 }
 
 void ARootGameSequencer::SuccessedSavingBattleRate()
 {
-	UE_SUCCESS_LOG("successed save battle rate");
+	ULogFunctionLibrary::DisplayLog(ELogType::Success, "successed save battle rate");
 }
 
 void ARootGameSequencer::FailedSavingBattleRate()
 {
-	UE_ERROR_LOG("failed save battle rate");
+	ULogFunctionLibrary::DisplayLog(ELogType::Error, "failed save battle rate");
 }

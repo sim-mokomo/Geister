@@ -6,6 +6,7 @@
 #include "Misc/Paths.h"
 #include "FileHelper.h"
 #include "JsonUtilities.h"
+#include "LogFunctionLibrary.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "JsonFunctionLibrary.generated.h"
 
@@ -22,20 +23,20 @@ public:
 	{
 		if (!FPaths::FileExists(fullPath))
 		{
-			UE_ERROR_LOG(fullPath + "is not exist")
+			ULogFunctionLibrary::DisplayLog(ELogType::Error, fullPath + "is not exist");
 			return false;
 		}
 
 		FString jsonRawString;
 		if (!FFileHelper::LoadFileToString(jsonRawString, *fullPath))
 		{
-			UE_ERROR_LOG(fullPath + "failed reading file")
+			ULogFunctionLibrary::DisplayLog(ELogType::Error, fullPath + "failed reading file");
 			return false;
 		}
 
 		if (!FJsonObjectConverter::JsonObjectStringToUStruct(jsonRawString, outStruct, checkFlags, skipFlags))
 		{
-			UE_ERROR_LOG(fullPath + "failed deserialize")
+			ULogFunctionLibrary::DisplayLog(ELogType::Error, fullPath + "failed deserialize");
 			return false;
 		}
 

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LogMacroLibrary.h"
 #include "GameFramework/Actor.h"
+#include "Delegate.h"
 #include "BattleSaveDataRepository.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSuccessSavingBattleRate);
