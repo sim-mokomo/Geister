@@ -1,16 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GS2LoginAccountProvider.h"
 
 AGS2LoginAccountProvider::AGS2LoginAccountProvider()
 {
-	
+	SetActorLabel("GS2LoginAccountProvider");
 }
 
 void AGS2LoginAccountProvider::SetInitializeConfig(FGS2LoginAccountInitializeData& config)
 {
-	this->initializeConfig = config;
+	initializeConfig = config;
 }
 
 void AGS2LoginAccountProvider::Login()
@@ -25,6 +24,7 @@ void AGS2LoginAccountProvider::Login()
 	{
 		if (initializedResult.getError().has_value())
 		{
+			OnErrorDelegate.Broadcast();
 			return;
 		}
 
@@ -33,22 +33,30 @@ void AGS2LoginAccountProvider::Login()
 		{
 			if (createdAccountResult.getError().has_value())
 			{
+				OnErrorDelegate.Broadcast();
 				return;
 			}
 
 			Account = createdAccountResult.getResult().value().getItem();
-
+			
 			auto authenticator = gs2::ez::Gs2AccountAuthenticator
 			(
 				Profile->getGs2Session(),
 				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)),
 				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AuthAccountEncryptionKeyId)),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*Account.getUserId())),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*Account.getPassword()))
+				Account.getUserId(),
+				Account.getPassword()
 			);
 			Profile->login([&](gs2::ez::Profile::AsyncLoginResult loggedinResult)
 			{
+				if (loggedinResult.getError().has_value())
+				{
+					OnErrorDelegate.Broadcast();
+					return;
+				}
+
 				GameSession = loggedinResult.getResult().value();
+				OnSuccessDelegate.Broadcast();
 			}, authenticator);
 		}, *new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)));
 	});
