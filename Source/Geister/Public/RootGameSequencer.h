@@ -4,6 +4,7 @@
 
 #include "BattleSaveDataRepository.h"
 #include "CoreMinimal.h"
+#include "GS2LoginAccountProvider.h"
 #include "GameSequenceSelector.h"
 #include "LoginAccountProvider.h"
 #include "GameFramework/Actor.h"
@@ -12,11 +13,29 @@
 #include "LogMacroLibrary.h"
 #include "SecretConfiguration.h"
 #include "ScreenManager.h"
-#include "PlayfabBattleSaveDataRepository.h"
-#include "PlayfabLoginAccountProvider.h"
 #include "UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "RootGameSequencer.generated.h"
+
+USTRUCT()
+struct FSecretLoginConfiguration
+{
+	GENERATED_BODY()
+public:
+	FSecretLoginConfiguration()
+	{
+
+	};
+
+	UPROPERTY()
+	FString clientId;
+	UPROPERTY()
+	FString clientSecretId;
+	UPROPERTY()
+	FString accountNamespaceName;
+	UPROPERTY()
+	FString accountEncryptionKey;
+};
 
 UCLASS()
 class GEISTER_API ARootGameSequencer : public AActor
@@ -32,7 +51,7 @@ public:
 	ALoginAccountProvider* LoginAccountProvider;
 	UPROPERTY()
 	ABattleSaveDataRepository* BattleSaveDataRepository;
-	PlayFabClientPtr ClientApi;
+	
 	UPROPERTY(EditAnywhere)
 	AGameSequenceSelector* GameSequenceSelector;
 	UPROPERTY(EditAnywhere)
@@ -61,7 +80,9 @@ private:
 
 static ARootGameSequencer* GetRootGameSequnecer(const UObject* WorldContextObject) 
 {
-	auto RootGameSequencerActor = UGameplayStatics::GetActorOfClass(WorldContextObject,ARootGameSequencer::StaticClass());
-	auto RootGameSequencer = Cast<ARootGameSequencer>(RootGameSequencerActor);\
+	TArray<AActor*> rootGameSequnecers;
+	UGameplayStatics::GetAllActorsOfClass(WorldContextObject, ARootGameSequencer::StaticClass(), rootGameSequnecers);
+	auto RootGameSequencerActor = rootGameSequnecers[0];
+	auto RootGameSequencer = Cast<ARootGameSequencer>(RootGameSequencerActor);
 	return RootGameSequencer;
 }

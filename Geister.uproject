@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{B3FBA7FC-425A-1FA3-62FF-FC856EB6E45B}",
+	"EngineAssociation": "4.22",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -11,19 +11,20 @@
 			"AdditionalDependencies": [
 				"Engine",
 				"CoreUObject",
-				"UMG"
+				"UMG",
+				"UMGEditor"
 			]
 		}
 	],
 	"Plugins": [
 		{
 			"Name": "PlayFab",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/217fdf581b784571af03d3fb6580368f"
 		},
 		{
 			"Name": "RiderLink",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "WindowsMoviePlayer",

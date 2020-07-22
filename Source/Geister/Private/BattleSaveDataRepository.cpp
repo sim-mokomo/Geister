@@ -3,8 +3,6 @@
 
 #include "BattleSaveDataRepository.h"
 
-#include "PlayFabClientDataModels.h"
-
 // Sets default values
 ABattleSaveDataRepository::ABattleSaveDataRepository()
 {
@@ -31,19 +29,3 @@ void ABattleSaveDataRepository::SaveBattleRate(uint8 newScore)
 {
 
 }
-
-void ABattleSaveDataRepository::Initialize(PlayFabClientPtr clientApi)
-{
-	this->clientPtr = clientPtr;
-}
-
-void ABattleSaveDataRepository::OnSuccessedSaveBattleRate(const PlayFab::ClientModels::FUpdateUserDataResult& result)
-{
-	
-}
-
-void ABattleSaveDataRepository::OnFailedSaveBattleRate(const PlayFab::FPlayFabCppError& error)
-{
-	
-}
-

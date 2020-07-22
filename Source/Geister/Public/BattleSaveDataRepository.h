@@ -3,9 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayFab.h"
-#include "PlayFabClientDataModels.h"
-#include "Core/PlayFabClientAPI.h"
 #include "LogMacroLibrary.h"
 #include "GameFramework/Actor.h"
 #include "BattleSaveDataRepository.generated.h"
@@ -21,7 +18,7 @@ public:
     FBattleRepositoryInitializeData()
     {
 		
-    };
+    }
 };
 
 UCLASS()
@@ -36,15 +33,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	PlayFabClientPtr clientPtr;
+	
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void SaveBattleRate(uint8 newScore);
-	virtual void Initialize(PlayFabClientPtr clientApi);
-	virtual void OnSuccessedSaveBattleRate(const PlayFab::ClientModels::FUpdateUserDataResult& result);
-	virtual void OnFailedSaveBattleRate(const PlayFab::FPlayFabCppError& error);
 
 	UPROPERTY()
     FOnSuccessSavingBattleRate OnSuccessDelegate;
