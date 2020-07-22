@@ -8,7 +8,8 @@ public class Geister : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG"});
-        PrivateDependencyModuleNames.AddRange(new string[] { "PlayFab", "PlayFabCpp", "PlayFabCommon" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "HTTP", "WebSocket","Json" });
+        PublicSystemIncludePaths.Add(System.IO.Path.Combine(ModuleDirectory, "gs2-unreal-engine-sdk/src/"));
+     
     }
 }
