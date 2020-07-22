@@ -446,4 +446,4 @@ Plugins/*
 Source/Geister/gs2-unreal-engine-sdk
 Source/Geister/Public/SecretConfiguration.h
 Source/Geister/Private/SecretConfiguration.cpp
-SecretGeisterConfig.json
+SecretLoginConfiguration.json

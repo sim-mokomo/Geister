@@ -27,7 +27,7 @@ void ARootGameSequencer::BeginPlay()
 	// BattleSaveDataRepository->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedSavingBattleRate);
 	// BattleSaveDataRepository->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedSavingBattleRate);
 
-	FString jsonFullPath = FPaths::ProjectDir().Append("SecretGeisterConfig").Append(TEXT(".json"));
+	FString jsonFullPath = FPaths::ProjectDir().Append("SecretLoginConfiguration").Append(TEXT(".json"));
 	FSecretLoginConfiguration secretLoginConfiguration;
 	UJsonFunctionLibrary::CreateUStructFromJsonPath<FSecretLoginConfiguration>(jsonFullPath, &secretLoginConfiguration, 0, 0);
 	
