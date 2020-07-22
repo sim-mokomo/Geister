@@ -1,6 +1,35 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GS2LoginAccountProvider.h"
+#include "LogFunctionLibrary.h"
+
+void AGS2LoginAccountProvider::LoginByAccount(gs2::ez::account::EzAccount account)
+{
+	auto authenticator = gs2::ez::Gs2AccountAuthenticator
+	(
+		Profile->getGs2Session(),
+		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)),
+		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AuthAccountEncryptionKeyId)),
+		account.getUserId(),
+		account.getPassword()
+	);
+	Profile->login([&](gs2::ez::Profile::AsyncLoginResult loggedinResult)
+	{
+		if (loggedinResult.getError().has_value())
+		{
+			OnErrorDelegate.Broadcast();
+			return;
+		}
+
+		GameSession = loggedinResult.getResult().value();
+
+		OnSuccessDelegate.Broadcast();
+	}, authenticator);
+}
+
+void AGS2LoginAccountProvider::BeginPlay()
+{
+}
 
 AGS2LoginAccountProvider::AGS2LoginAccountProvider()
 {
@@ -14,6 +43,9 @@ void AGS2LoginAccountProvider::SetInitializeConfig(FGS2LoginAccountInitializeDat
 
 void AGS2LoginAccountProvider::Login()
 {
+	AccountLocalSaveGameProvider = GetWorld()->SpawnActor<AGS2AccountLocalSaveGameProvider>();
+	AccountLocalSaveGameProvider->SetActorLabel("GS2AccountLocalSaveGameProvider");
+
 	Profile = std::make_shared<gs2::ez::Profile>
 	(
 		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.ClientId)),
@@ -29,36 +61,41 @@ void AGS2LoginAccountProvider::Login()
 		}
 
 		Client = std::make_shared<gs2::ez::account::Client>(*Profile);
-		Client->create([&](gs2::ez::account::AsyncEzCreateResult createdAccountResult)
+		if (AccountLocalSaveGameProvider->ExistsSaveGame())
 		{
-			if (createdAccountResult.getError().has_value())
+			auto savedGameInstance = AccountLocalSaveGameProvider->GetSaveGame();
+			Client->authentication([&](gs2::ez::account::AsyncEzAuthenticationResult authenticationResult)
 			{
-				OnErrorDelegate.Broadcast();
-				return;
-			}
-
-			Account = createdAccountResult.getResult().value().getItem();
-			
-			auto authenticator = gs2::ez::Gs2AccountAuthenticator
-			(
-				Profile->getGs2Session(),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AuthAccountEncryptionKeyId)),
-				Account.getUserId(),
-				Account.getPassword()
-			);
-			Profile->login([&](gs2::ez::Profile::AsyncLoginResult loggedinResult)
-			{
-				if (loggedinResult.getError().has_value())
+				if (authenticationResult.getError().has_value())
 				{
 					OnErrorDelegate.Broadcast();
 					return;
 				}
 
-				GameSession = loggedinResult.getResult().value();
-				OnSuccessDelegate.Broadcast();
-			}, authenticator);
-		}, *new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)));
+				Account = authenticationResult.getResult().value().getItem();
+				LoginByAccount(Account);
+			},
+				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)),
+				*new gs2::StringHolder(TCHAR_TO_UTF8(*savedGameInstance->GetUserId())),
+				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AuthAccountEncryptionKeyId)),
+				*new gs2::StringHolder(TCHAR_TO_UTF8(*savedGameInstance->GetUserPassword())));
+		}
+		else
+		{
+			Client->create([&](gs2::ez::account::AsyncEzCreateResult createdAccountResult)
+			{
+				if (createdAccountResult.getError().has_value())
+				{
+					OnErrorDelegate.Broadcast();
+					return;
+				}
+				Account = createdAccountResult.getResult().value().getItem();
+				AccountLocalSaveGameProvider->Save(
+					FString(Account.getUserId().getCString()),
+					FString(Account.getPassword().getCString()));
+				LoginByAccount(Account);
+			}, *new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)));
+		}
 	});
 }
 

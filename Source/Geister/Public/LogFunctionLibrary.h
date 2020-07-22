@@ -27,8 +27,8 @@ private:
 	{
 		TMap<ELogType, FColor> map = {
 			{ELogType::Success, FColor::Green},
-			{ ELogType::Success,FColor::Green },
-			{ ELogType::Success,FColor::Green }
+			{ ELogType::Warning,FColor::Yellow},
+			{ ELogType::Error,FColor::Red }
 		};
 
 		auto color = map.Find(logType);
