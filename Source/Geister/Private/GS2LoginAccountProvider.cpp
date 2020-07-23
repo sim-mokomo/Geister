@@ -8,8 +8,8 @@ void AGS2LoginAccountProvider::LoginByAccount(gs2::ez::account::EzAccount accoun
 	auto authenticator = gs2::ez::Gs2AccountAuthenticator
 	(
 		Profile->getGs2Session(),
-		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)),
-		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AuthAccountEncryptionKeyId)),
+		*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AccountNameSpaceName),
+		*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AuthAccountEncryptionKeyId),
 		account.getUserId(),
 		account.getPassword()
 	);
@@ -47,11 +47,11 @@ void AGS2LoginAccountProvider::Login()
 	AccountLocalSaveGameProvider->SetActorLabel("GS2AccountLocalSaveGameProvider");
 
 	Profile = std::make_shared<gs2::ez::Profile>
-	(
-		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.ClientId)),
-		*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.ClientSecretId)),
-		gs2::ez::Gs2BasicReopener()
-	);
+		(
+			*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.ClientId),
+			*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.ClientSecretId),
+			gs2::ez::Gs2BasicReopener()
+			);
 	Profile->initialize([&](gs2::ez::Profile::AsyncInitializeResult initializedResult)
 	{
 		if (initializedResult.getError().has_value())
@@ -75,10 +75,10 @@ void AGS2LoginAccountProvider::Login()
 				Account = authenticationResult.getResult().value().getItem();
 				LoginByAccount(Account);
 			},
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*savedGameInstance->GetUserId())),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AuthAccountEncryptionKeyId)),
-				*new gs2::StringHolder(TCHAR_TO_UTF8(*savedGameInstance->GetUserPassword())));
+				*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AccountNameSpaceName),
+				*UGS2FunctionLibrary::CreateStringHolderFromFString(savedGameInstance->GetUserId()),
+				*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AuthAccountEncryptionKeyId),
+				*UGS2FunctionLibrary::CreateStringHolderFromFString(savedGameInstance->GetUserPassword()));
 		}
 		else
 		{
@@ -94,7 +94,7 @@ void AGS2LoginAccountProvider::Login()
 					FString(Account.getUserId().getCString()),
 					FString(Account.getPassword().getCString()));
 				LoginByAccount(Account);
-			}, *new gs2::StringHolder(TCHAR_TO_UTF8(*initializeConfig.AccountNameSpaceName)));
+			}, *UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AccountNameSpaceName));
 		}
 	});
 }

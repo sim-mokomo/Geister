@@ -6,6 +6,7 @@
 #include <gs2-unreal-engine-sdk/src/gs2/ez/Gs2Ez.hpp>
 #include "LoginAccountProvider.h"
 #include "Engine/World.h"
+#include "GS2FunctionLibrary.h"
 #include "GS2AccountLocalSaveGameProvider.h"
 #include "GS2LoginAccountProvider.generated.h"
 
