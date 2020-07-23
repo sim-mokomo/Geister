@@ -85,6 +85,7 @@ void AGS2LoginAccountProvider::Login()
 				}
 
 				Account = authenticationResult.getResult().value().getItem();
+				ULogFunctionLibrary::DisplayLog(ELogType::Success, "start cache login");
 				LoginByAccount(Account);
 			},
 				*UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AccountNameSpaceName),
@@ -105,6 +106,7 @@ void AGS2LoginAccountProvider::Login()
 				AccountLocalSaveGameProvider->Save(
 					FString(Account.getUserId().getCString()),
 					FString(Account.getPassword().getCString()));
+				ULogFunctionLibrary::DisplayLog(ELogType::Success, "start new account create login");
 				LoginByAccount(Account);
 			}, *UGS2FunctionLibrary::CreateStringHolderFromFString(initializeConfig.AccountNameSpaceName));
 		}
