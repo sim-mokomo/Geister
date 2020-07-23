@@ -22,4 +22,14 @@ public:
 		return stringHolder;
 	}
 
+	static void DisplayGS2Error(gs2::Gs2ClientException exception)
+	{
+		auto errors = exception.getErrors();
+		for (auto i = 0; i < errors.getCount(); i++)
+		{
+			auto error = errors[i];
+			auto message = FString(error.getMessage().value().getCString());
+			ULogFunctionLibrary::DisplayLog(ELogType::Error, message);
+		}
+	}
 };

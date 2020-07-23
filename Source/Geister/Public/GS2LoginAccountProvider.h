@@ -53,11 +53,14 @@ private:
 	std::shared_ptr<gs2::ez::Profile> Profile;
 	gs2::ez::account::EzAccount Account;
 	gs2::ez::GameSession GameSession;
+	gs2::Gs2ClientException LatestGS2ClientException;
 	UPROPERTY()
 		FGS2LoginAccountInitializeData initializeConfig;
 	UPROPERTY()
 		AGS2AccountLocalSaveGameProvider* AccountLocalSaveGameProvider;
 	void LoginByAccount(gs2::ez::account::EzAccount account);
+	void OnError(gs2::Gs2ClientException clientException);
+	void OnErrorInternal();
 protected:
 	void BeginPlay() override;
 public:

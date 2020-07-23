@@ -17,7 +17,7 @@ void AGS2LoginAccountProvider::LoginByAccount(gs2::ez::account::EzAccount accoun
 	{
 		if (loggedinResult.getError().has_value())
 		{
-			OnErrorDelegate.Broadcast();
+			OnError(loggedinResult.getError().value());
 			return;
 		}
 
@@ -27,8 +27,20 @@ void AGS2LoginAccountProvider::LoginByAccount(gs2::ez::account::EzAccount accoun
 	}, authenticator);
 }
 
+void AGS2LoginAccountProvider::OnError(gs2::Gs2ClientException clientException)
+{
+	LatestGS2ClientException = clientException;
+	OnErrorDelegate.Broadcast();
+}
+
+void AGS2LoginAccountProvider::OnErrorInternal()
+{
+	UGS2FunctionLibrary::DisplayGS2Error(LatestGS2ClientException);
+}
+
 void AGS2LoginAccountProvider::BeginPlay()
 {
+	OnErrorDelegate.AddDynamic(this, &AGS2LoginAccountProvider::OnErrorInternal);
 }
 
 AGS2LoginAccountProvider::AGS2LoginAccountProvider()
@@ -56,7 +68,7 @@ void AGS2LoginAccountProvider::Login()
 	{
 		if (initializedResult.getError().has_value())
 		{
-			OnErrorDelegate.Broadcast();
+			OnError(initializedResult.getError().value());
 			return;
 		}
 
@@ -68,7 +80,7 @@ void AGS2LoginAccountProvider::Login()
 			{
 				if (authenticationResult.getError().has_value())
 				{
-					OnErrorDelegate.Broadcast();
+					OnError(authenticationResult.getError().value());
 					return;
 				}
 
@@ -86,7 +98,7 @@ void AGS2LoginAccountProvider::Login()
 			{
 				if (createdAccountResult.getError().has_value())
 				{
-					OnErrorDelegate.Broadcast();
+					OnError(createdAccountResult.getError().value());
 					return;
 				}
 				Account = createdAccountResult.getResult().value().getItem();
