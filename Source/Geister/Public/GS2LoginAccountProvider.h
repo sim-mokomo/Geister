@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include <gs2-unreal-engine-sdk/src/gs2/ez/Gs2Ez.hpp>
 #include "LoginAccountProvider.h"
+#include "Engine/World.h"
+#include "GS2FunctionLibrary.h"
+#include "GS2AccountLocalSaveGameProvider.h"
 #include "GS2LoginAccountProvider.generated.h"
 
 USTRUCT()
@@ -27,11 +30,15 @@ public:
 		AccountNameSpaceName = accountNameSpaceNameKey;
 		AuthAccountEncryptionKeyId = authAccountEncryptionKeyId;
 	};
-	
-	FString ClientId;
-	FString ClientSecretId;
-	FString AccountNameSpaceName;
-	FString AuthAccountEncryptionKeyId;
+
+	UPROPERTY()
+		FString ClientId;
+	UPROPERTY()
+		FString ClientSecretId;
+	UPROPERTY()
+		FString AccountNameSpaceName;
+	UPROPERTY()
+		FString AuthAccountEncryptionKeyId;
 };
 
 /**
@@ -46,14 +53,26 @@ private:
 	std::shared_ptr<gs2::ez::Profile> Profile;
 	gs2::ez::account::EzAccount Account;
 	gs2::ez::GameSession GameSession;
-	FGS2LoginAccountInitializeData initializeConfig;
-	
+	gs2::Gs2ClientException LatestGS2ClientException;
+	UPROPERTY()
+		FGS2LoginAccountInitializeData initializeConfig;
+	UPROPERTY()
+		AGS2AccountLocalSaveGameProvider* AccountLocalSaveGameProvider;
+	void LoginByAccount(gs2::ez::account::EzAccount account);
+	void OnError(gs2::Gs2ClientException clientException);
+	void OnErrorInternal();
+protected:
+	void BeginPlay() override;
 public:
 	AGS2LoginAccountProvider();
-	void Login() override;
-	void Logout() override;
 
-	void SetInitializeConfig(FGS2LoginAccountInitializeData& config);
+	UFUNCTION()
+		void Login() override;
+	UFUNCTION()
+		void Logout() override;
+	UFUNCTION()
+		void SetInitializeConfig(FGS2LoginAccountInitializeData& config);
+
 	gs2::ez::account::EzAccount GetAccount() const { return Account; }
 	gs2::ez::account::Client* GetClient() const { return Client.get(); }
 	gs2::ez::GameSession GetGameSession() const { return GameSession; }

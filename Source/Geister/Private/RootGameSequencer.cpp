@@ -2,7 +2,6 @@
 
 
 #include "RootGameSequencer.h"
-
 // #include "TitleScreenPresenter.h"
 
 // Sets default values
@@ -18,24 +17,28 @@ void ARootGameSequencer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ClientApi = IPlayFabModuleInterface::Get().GetClientAPI();
-	ClientApi->SetTitleId(TEXT(TITLEID));
-
 	const FTransform spawnTransform = FTransform::Identity;
-	auto playfabBattleSaveRepository = GetWorld()->SpawnActorDeferred<APlayfabBattleSaveDataRepository>(APlayfabBattleSaveDataRepository::StaticClass(),spawnTransform);
-	FPlayfabBattleRepositoryInitializeData PlayfabBattleRepositoryInitializeData(ClientApi);
-	playfabBattleSaveRepository->SetInitializeData(PlayfabBattleRepositoryInitializeData);
-	playfabBattleSaveRepository->FinishSpawning(spawnTransform);
-	BattleSaveDataRepository =playfabBattleSaveRepository;
-	BattleSaveDataRepository->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedSavingBattleRate);
-	BattleSaveDataRepository->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedSavingBattleRate);
-		
-	auto playfabLoginAccountProvider = GetWorld()->SpawnActorDeferred<APlayfabLoginAccountProvider>(APlayfabLoginAccountProvider::StaticClass(),spawnTransform);
-	FPlayfabLoginAccountInitializeData playfabLoginAccountInitializeData(ClientApi);
-	playfabLoginAccountProvider->SetInitializeData(playfabLoginAccountInitializeData);
-	playfabLoginAccountProvider->FinishSpawning(spawnTransform);
+	// auto playfabBattleSaveRepository = GetWorld()->SpawnActorDeferred<APlayfabBattleSaveDataRepository>(APlayfabBattleSaveDataRepository::StaticClass(),spawnTransform);
+	// FPlayfabBattleRepositoryInitializeData PlayfabBattleRepositoryInitializeData(ClientApi);
+	// playfabBattleSaveRepository->SetInitializeData(PlayfabBattleRepositoryInitializeData);
+	// playfabBattleSaveRepository->FinishSpawning(spawnTransform);
+	// BattleSaveDataRepository =playfabBattleSaveRepository;
+	// BattleSaveDataRepository->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedSavingBattleRate);
+	// BattleSaveDataRepository->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedSavingBattleRate);
+
+	FString jsonFullPath = FPaths::ProjectDir().Append("SecretLoginConfiguration").Append(TEXT(".json"));
+	FSecretLoginConfiguration secretLoginConfiguration;
+	UJsonFunctionLibrary::CreateUStructFromJsonPath<FSecretLoginConfiguration>(jsonFullPath, &secretLoginConfiguration, 0, 0);
 	
-	LoginAccountProvider = playfabLoginAccountProvider;
+	auto gs2LoginAccountProvider = GetWorld()->SpawnActorDeferred<AGS2LoginAccountProvider>(AGS2LoginAccountProvider::StaticClass(),spawnTransform);
+	FGS2LoginAccountInitializeData gs2LoginAccountInitializeData(
+		secretLoginConfiguration.clientId,
+		secretLoginConfiguration.clientSecretId,
+		secretLoginConfiguration.accountNamespaceName,
+		secretLoginConfiguration.accountEncryptionKey);
+	gs2LoginAccountProvider->SetInitializeConfig(gs2LoginAccountInitializeData);
+	gs2LoginAccountProvider->FinishSpawning(spawnTransform);
+	LoginAccountProvider = gs2LoginAccountProvider;
 	LoginAccountProvider->OnSuccessDelegate.AddDynamic(this,&ARootGameSequencer::SuccessedLoggedin);
 	LoginAccountProvider->OnErrorDelegate.AddDynamic(this,&ARootGameSequencer::FailedLoggedin);
 	LoginAccountProvider->Login();
@@ -53,21 +56,20 @@ void ARootGameSequencer::Tick(float DeltaTime)
 
 void ARootGameSequencer::SuccessedLoggedin()
 {
-	UE_SUCCESS_LOG("sucessed login");	
-	BattleSaveDataRepository->SaveBattleRate(100);
+	ULogFunctionLibrary::DisplayLog(ELogType::Success, "successed login");
 }
 
 void ARootGameSequencer::FailedLoggedin()
 {
-	UE_SUCCESS_LOG("sucessed logout");
+	ULogFunctionLibrary::DisplayLog(ELogType::Error, "failed login");
 }
 
 void ARootGameSequencer::SuccessedSavingBattleRate()
 {
-	UE_SUCCESS_LOG("successed save battle rate");
+	ULogFunctionLibrary::DisplayLog(ELogType::Success, "successed save battle rate");
 }
 
 void ARootGameSequencer::FailedSavingBattleRate()
 {
-	UE_ERROR_LOG("failed save battle rate");
+	ULogFunctionLibrary::DisplayLog(ELogType::Error, "failed save battle rate");
 }
